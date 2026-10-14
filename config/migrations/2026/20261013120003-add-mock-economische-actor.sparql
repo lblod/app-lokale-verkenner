@@ -1,0 +1,58 @@
+# Mock vereniging (VZW / Economische actor) account for local testing.
+# The org data lives in the public graph; the person/account is written to
+# both the public graph and the organization's graph so the authenticated
+# session can see the org data.
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dc: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX adms: <http://www.w3.org/ns/adms#>
+PREFIX org: <http://www.w3.org/ns/org#>
+
+# MOCK VZW
+INSERT DATA {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://data.lblod.info/id/organisaties/f8abf759-d839-4b67-9af1-7bb4e0fb8e58> a org:Organization ;
+        mu:uuid 'f8abf759-d839-4b67-9af1-7bb4e0fb8e58' ;
+        skos:prefLabel "Mock Vereniging (EA)" ;
+        dc:description "Mock vereniging for testing" ;
+        org:classification <http://data.lblod.info/id/concept/c6157470-9fb3-4e8d-a9b7-8737dbfa3642> ;
+        adms:identifier <http://data.lblod.info/id/identificatoren/629c5529-15d9-46e0-97dc-51dfad795e35>.
+
+    <http://data.lblod.info/id/identificatoren/629c5529-15d9-46e0-97dc-51dfad795e35> a adms:Identifier;
+        mu:uuid "629c5529-15d9-46e0-97dc-51dfad795e35" ;
+        skos:notation "V0000001".
+  }
+}
+;
+
+INSERT {
+  GRAPH ?g {
+     ?persoon a foaf:Person;
+           mu:uuid ?uuidPersoon;
+           foaf:firstName ?classificatie;
+           foaf:familyName ?naam;
+           foaf:member <http://data.lblod.info/id/organisaties/f8abf759-d839-4b67-9af1-7bb4e0fb8e58> ;
+           foaf:account ?account.
+     ?account a foaf:OnlineAccount;
+           mu:uuid ?uuidAccount;
+           foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service>;
+           ext:sessionRole "ABBOrganisatiePortaalGebruiker-beheerder".
+  }
+} WHERE {
+     <http://data.lblod.info/id/organisaties/f8abf759-d839-4b67-9af1-7bb4e0fb8e58> a org:Organization;
+        skos:prefLabel ?naam;
+        org:classification/skos:prefLabel ?classificatie.
+     FILTER(LANG(?classificatie) = "nl")
+     BIND(CONCAT(?classificatie, " ", ?naam) as ?volledigeNaam)
+     BIND(MD5(?volledigeNaam) as ?uuidPersoon)
+     BIND(MD5(CONCAT(?volledigeNaam,"ACCOUNT")) as ?uuidAccount)
+     BIND(IRI(CONCAT("http://data.lblod.info/id/persoon/", ?uuidPersoon)) AS ?persoon)
+     BIND(IRI(CONCAT("http://data.lblod.info/id/account/", ?uuidAccount)) AS ?account)
+
+     VALUES ?g {
+        <http://mu.semte.ch/graphs/organizations/f8abf759-d839-4b67-9af1-7bb4e0fb8e58>
+        <http://mu.semte.ch/graphs/public>
+     }
+}

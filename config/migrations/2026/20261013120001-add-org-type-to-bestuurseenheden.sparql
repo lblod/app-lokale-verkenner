@@ -1,0 +1,14 @@
+# Add rdf:type org:Organization to every bestuurseenheid.
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX org: <http://www.w3.org/ns/org#>
+
+INSERT {
+  GRAPH ?g {
+    ?subject a org:Organization.
+  }
+}
+WHERE {
+  GRAPH ?g {
+    ?subject a besluit:Bestuurseenheid.
+  }
+}

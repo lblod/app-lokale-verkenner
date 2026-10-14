@@ -1,0 +1,25 @@
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX lblod: <http://data.lblod.info/id/conceptscheme/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+
+INSERT DATA {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    # Create ACMIDMOrganisationClassification concept scheme
+    <http://data.lblod.info/id/conceptscheme/ACMIDMOrganisationClassification> a <http://www.w3.org/2004/02/skos/core#ConceptScheme>;
+      mu:uuid "586e1a3d-56ef-424b-862d-2123d8b7189f" ;
+      skos:prefLabel "ACM/IDM OrganisatieClassificatie"@nl ;
+      skos:prefLabel "ACM/IDM OrganisationClassification"@en ;
+      skos:definition "Lijst van type organisaties binnen ACM/IDM"@nl .
+
+    # Add concept-scheme for economische actoren
+    <http://data.lblod.info/id/concept/c6157470-9fb3-4e8d-a9b7-8737dbfa3642>
+      mu:uuid "c6157470-9fb3-4e8d-a9b7-8737dbfa3642" ;
+      rdf:type skos:Concept , ext:OrganizationClassificationCode;
+      skos:prefLabel "Economische actor"@nl ;
+      skos:definition "Economische actoren binnen ACM/IDM"@nl ;
+      skos:topConceptOf lblod:ACMIDMOrganisationClassification ;
+      skos:inScheme lblod:ACMIDMOrganisationClassification .
+  }
+}
