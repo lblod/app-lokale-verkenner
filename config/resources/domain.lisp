@@ -1,26 +1,18 @@
 (in-package :mu-cl-resources)
 
-(setf *include-count-in-paginated-responses* t)
-(setf *supply-cache-headers-p* t)
-(setf sparql:*experimental-no-application-graph-for-sudo-select-queries* t)
-(setf *cache-model-properties-p* t)
-(setf mu-support::*use-custom-boolean-type-p* nil)
-(setq *cache-count-queries-p* t)
-(setf sparql:*query-log-types* nil) ;; hint: use app-http-logger for logging queries instead, all is '(:default :update-group :update :query :ask)
+(defparameter *include-count-in-paginated-responses* t)
 
+; fixes bug in sorting - parameter is a workaround for virtuoso behaviour (see docs) but cause problems for sorting
+(defparameter *max-group-sorted-properties* nil)
 
-;; example
-;; (define-resource dataset ()
-;;   :class (s-prefix "dcat:Dataset")
-;;   :properties `((:title :string ,(s-prefix "dct:title"))
-;;                 (:description :string ,(s-prefix "dct:description")))
-;;   :has-one `((catalog :via ,(s-prefix "dcat:dataset")
-;;                       :inverse t
-;;                       :as "catalog"))
-;;   :has-many `((theme :via ,(s-prefix "dcat:theme")
-;;                      :as "themes"))
-;;   :resource-base (s-url "http://webcat.tmp.semte.ch/datasets/")
-;;   :on-path "datasets")
+; Enable caching: https://github.com/mu-semtech/mu-cl-resources/blob/master/README.md#caching
+(defparameter *cache-model-properties* t)
+(defparameter *cache-count-queries* t)
+(defparameter *supply-cache-headers-p* t)
+(defparameter sparql:*experimental-no-application-graph-for-sudo-select-queries* t)
 
-;; reading in the domain.json
+; use xsd:boolean instead of custom datatype
+(defparameter *use-custom-boolean-type-p* nil)
+
 (read-domain-file "domain.json")
+(read-domain-file "auth.json")
