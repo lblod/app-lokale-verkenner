@@ -94,3 +94,21 @@ services:
       - triplestore:database
     restart: always
     logging: *default-logging
+
+  change-requests:
+    # Every edit of organisation data goes through this service (POST /change-requests); see
+    # the "Change requests" section of the README and config/authorization/config.lisp.
+    # The image is not published yet: run the stack with docker-compose.dev.yml, which mounts
+    # a checkout of ../change-request-service instead.
+    image: lblod/change-request-service:0.1.0
+    environment:
+      DEFAULT_MU_AUTH_SCOPE: "http://services.lblod.info/change-request-service"
+      APPLICATION_GRAPH: "http://mu.semte.ch/graphs/public"
+      CONFIG_FILE: "/config/change-requests/change-requests.json"
+    volumes:
+      - ./config/change-requests:/config/change-requests:ro
+      - ./config/resources:/config/resources:ro
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging

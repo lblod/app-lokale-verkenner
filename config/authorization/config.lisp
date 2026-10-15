@@ -38,7 +38,14 @@
   :session "http://mu.semte.ch/vocabularies/session/"
   :ext "http://mu.semte.ch/vocabularies/ext/"
   ;; Custom prefix URIs here, prefix casing is ignored
-  )
+  :org "http://www.w3.org/ns/org#"
+  :besluit "http://data.vlaanderen.be/ns/besluit#"
+  :regorg "http://www.w3.org/ns/regorg#"
+  :locn "http://www.w3.org/ns/locn#"
+  :schema "http://schema.org/"
+  :adms "http://www.w3.org/ns/adms#"
+  :generiek "https://data.vlaanderen.be/ns/generiek#"
+  :cr "http://lblod.data.gift/vocabularies/change-requests/")
 
 
 ;;;;;;;;;
@@ -50,18 +57,37 @@
 ;; specifications can be folded too.  This could help when building
 ;; indexes.
 
+;; All organisation data, the accounts of mock-login and the code lists. Read side only:
+;; nobody gets a write grant on this spec, so it can stay "any type, any predicate".
 (define-graph public ("http://mu.semte.ch/graphs/public")
   (_ -> _)) ; public allows ANY TYPE -> ANY PREDICATE in the direction
             ; of the arrow
 
-;; Example:
-;; (define-graph company ("http://mu.semte.ch/graphs/companies/")
-;;   ("foaf:OnlineAccount"
-;;    -> "foaf:accountName"
-;;    -> "foaf:accountServiceHomepage")
-;;   ("foaf:Group"
-;;    -> "foaf:name"
-;;    -> "foaf:member"))
+;; The same graph, as the change-request service may write it: only the types of its aggregates
+;; (organisations, sites, addresses, contact points, identifiers; see
+;; config/change-requests/change-requests.json). Listing the types also keeps the service's own
+;; records (cr:ChangeRequest, cr:Version) out of this graph: sparql-parser writes a quad to every
+;; writable graph whose specification matches it, and "_ -> _" would match them too.
+(define-graph organisation-data ("http://mu.semte.ch/graphs/public")
+  ("org:Organization" -> _)
+  ("besluit:Bestuurseenheid" -> _)
+  ("regorg:RegisteredOrganization" -> _)
+  ("org:Site" -> _)
+  ("locn:Address" -> _)
+  ("schema:ContactPoint" -> _)
+  ("adms:Identifier" -> _)
+  ("generiek:GestructureerdeIdentificator" -> _))
+
+;; Change requests and their versions, the history of every edit. Only the change-request
+;; service reads and writes it; it decides per request who may see it.
+(define-graph change-requests ("http://mu.semte.ch/graphs/change-requests" :delta nil)
+  ("cr:ChangeRequest" -> _)
+  ("cr:Version" -> _))
+
+;; The sessions mock-login (and later the login service) writes. The change-request service
+;; reads the account and the organisation of a session from it.
+(define-graph sessions ("http://mu.semte.ch/graphs/sessions")
+  ("session:Session" -> _))
 
 
 ;;;;;;;;;;;;;
@@ -69,19 +95,21 @@
 
 (supply-allowed-group "public")
 
-(grant (read write)
+;; Nobody writes the organisation data directly: every edit is a change request.
+;; Writes happen only through change-request-service (POST /change-requests), which sends the
+;; scope below and enforces who may edit what (its policies/ folder). Reads of change requests
+;; are filtered per organisation by that service, not here.
+;; A direct POST, PATCH or DELETE on a resource route has no writable graph and is refused.
+(grant (read)
        :to-graph public
        :for-allowed-group "public")
 
-;; example:
-
-;; (supply-allowed-group "company"
-;;   :query "PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
-;;           SELECT DISTINCT ?uuid WHERE {
-;;             <SESSION_ID> ext:belongsToCompany/mu:uuid ?uuid
-;;           }"
-;;   :parameters ("uuid"))
-
-;; (grant (read write)
-;;        :to company
-;;        :for "company")
+;; The exception: the change-request service. The scope header can only come from a service in
+;; the stack: mu-identifier (1.11.0 and later) strips mu-auth-scope from what a browser sends.
+(with-scope "http://services.lblod.info/change-request-service"
+  (grant (read)
+         :to-graph (public sessions)
+         :for-allowed-group "public")
+  (grant (read write)
+         :to-graph (organisation-data change-requests)
+         :for-allowed-group "public"))

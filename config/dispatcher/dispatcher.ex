@@ -290,6 +290,16 @@ defmodule Dispatcher do
   end
 
   ###############
+  # CHANGE REQUESTS
+  ###############
+
+  # Every edit of organisation data; the resource routes above are read-only
+  # (see config/authorization/config.lisp).
+  match "/change-requests/*path", %{accept: [:json], layer: :api} do
+    Proxy.forward(conn, path, "http://change-requests/change-requests/")
+  end
+
+  ###############
   # LOGIN
   ###############
 

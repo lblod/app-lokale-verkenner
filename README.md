@@ -1,4 +1,31 @@
-# mu-project
+# app-rvs
+
+Backend of the Register van Samenwerkingsverbanden (RVS; the name will change), a slimmed-down
+version of app-organization-portal for local governments, economische actoren and other
+organisations.
+
+## Change requests
+
+Every edit of organisation data is a change request, handled by
+[change-request-service](https://github.com/lblod/change-request-service) at `/change-requests`.
+The service checks who may edit what (own organisation; ABB edits all), keeps the request and its
+versions in `http://mu.semte.ch/graphs/change-requests`, and applies it to the organisation data in
+`http://mu.semte.ch/graphs/public`. In this iteration every request is approved at once.
+
+The resource routes are read-only: `config/authorization/config.lisp` gives no one a write grant
+on the organisation data except the service, through its scope. Its configuration (aggregates,
+the ABB organisation) is `config/change-requests/change-requests.json`.
+
+Development, with a checkout of change-request-service next to this repository (`../change-request-service`),
+which `docker-compose.dev.yml` mounts into the template image:
+
+    docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+The identifier listens on http://localhost:88 and Virtuoso on http://localhost:8899. Log in through
+mock-login (frontend-rvs, or `POST /mock/sessions`), then post change requests. The service's
+`scripts/e2e-mock-login.sh` runs the whole flow against this setup.
+
+## mu-project
 
 Bootstrap a mu.semte.ch microservices environment in three easy steps.
 
