@@ -45,6 +45,8 @@
   :schema "http://schema.org/"
   :adms "http://www.w3.org/ns/adms#"
   :generiek "https://data.vlaanderen.be/ns/generiek#"
+  :rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  :oslc "http://open-services.net/ns/core#"
   :cr "http://lblod.data.gift/vocabularies/change-requests/")
 
 
@@ -66,8 +68,9 @@
 ;; The same graph, as the change-request service may write it: only the types of its aggregates
 ;; (organisations, sites, addresses, contact points, identifiers; see
 ;; config/change-requests/change-requests.json). Listing the types also keeps the service's own
-;; records (cr:ChangeRequest, cr:Version) out of this graph: sparql-parser writes a quad to every
-;; writable graph whose specification matches it, and "_ -> _" would match them too.
+;; records (cr:ChangeRequest, cr:Action, cr:ProposedVersion, cr:RecordState, ...) out of this
+;; graph: sparql-parser writes a quad to every writable graph whose specification matches it, and
+;; "_ -> _" would match them too.
 (define-graph organisation-data ("http://mu.semte.ch/graphs/public")
   ("org:Organization" -> _)
   ("besluit:Bestuurseenheid" -> _)
@@ -79,10 +82,20 @@
   ("generiek:GestructureerdeIdentificator" -> _))
 
 ;; Change requests and their versions, the history of every edit. Only the change-request
-;; service reads and writes it; it decides per request who may see it.
+;; service reads and writes it; it decides per request who may see it. Every class the service
+;; writes must be listed: sparql-parser places a quad by the type of its subject.
 (define-graph change-requests ("http://mu.semte.ch/graphs/change-requests" :delta nil)
   ("cr:ChangeRequest" -> _)
-  ("cr:Version" -> _))
+  ;; the steps of a request (indiening, goedkeuring, ...)
+  ("cr:Action" -> _)
+  ;; the proposed state of each record a request changes
+  ("cr:ProposedVersion" -> _)
+  ;; the values a version started from, and the values an apply replaced
+  ("cr:RecordState" -> _)
+  ;; the links that pointed at a deleted record, kept by its record states
+  ("rdf:Statement" -> _)
+  ;; why an apply failed
+  ("oslc:Error" -> _))
 
 ;; The sessions mock-login (and later the login service) writes. The change-request service
 ;; reads the account and the organisation of a session from it.

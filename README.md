@@ -8,13 +8,18 @@ organisations.
 
 Every edit of organisation data is a change request, handled by
 [change-request-service](https://github.com/lblod/change-request-service) at `/change-requests`.
-The service checks who may edit what (own organisation; ABB edits all), keeps the request and its
-versions in `http://mu.semte.ch/graphs/change-requests`, and applies it to the organisation data in
-`http://mu.semte.ch/graphs/public`. In this iteration every request is approved at once.
+The service checks who may edit what (own organisation; ABB edits all), keeps the request with its
+steps and versions in `http://mu.semte.ch/graphs/change-requests`, and applies it to the
+organisation data in `http://mu.semte.ch/graphs/public`. A request is approved at once unless it
+conflicts with a change someone made after its form was loaded; such a request waits until ABB
+approves or rejects it (`POST /change-requests/:id/steps`).
 
 The resource routes are read-only: `config/authorization/config.lisp` gives no one a write grant
 on the organisation data except the service, through its scope. Its configuration (aggregates,
-the ABB organisation) is `config/change-requests/change-requests.json`.
+the ABB organisation) is `config/change-requests/change-requests.json`. The data it writes
+(requests, steps, proposed versions, record states) is described in the service's README and
+vocabulary; the two code lists it uses, the status of a request and the type of a step, are
+loaded into the public graph by `config/migrations/2026/20261015120000-add-change-request-code-lists.ttl`.
 
 Development, with a checkout of change-request-service next to this repository (`../change-request-service`),
 which `docker-compose.dev.yml` mounts into the template image:
