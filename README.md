@@ -1,6 +1,6 @@
-# app-rvs
+# app-lokale-verkenner
 
-Backend of the Register van Samenwerkingsverbanden (RVS; the name will change), a slimmed-down
+Backend of the Lokale Verkenner, a slimmed-down
 version of app-organization-portal for local governments, economische actoren and other
 organisations.
 
@@ -27,7 +27,7 @@ which `docker-compose.dev.yml` mounts into the template image:
     docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 The identifier listens on http://localhost:88 and Virtuoso on http://localhost:8899. Log in through
-mock-login (frontend-rvs, or `POST /mock/sessions`), then post change requests. The service's
+mock-login (frontend-lokale-verkenner, or `POST /mock/sessions`), then post change requests. The service's
 `scripts/e2e-mock-login.sh` runs the whole flow against this setup.
 
 ## mu-project
