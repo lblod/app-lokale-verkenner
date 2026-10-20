@@ -95,6 +95,17 @@ services:
     restart: always
     logging: *default-logging
 
+  scope-of-operation:
+    # The werkingsgebied of an organisation, as in OP: the label and the municipalities of a
+    # scope, and one location for a set of locations (an existing one, or a composed one it
+    # creates in the public graph). The frontend calls it on the kerngegevens page and in the
+    # creation and change-event forms; see config/dispatcher/dispatcher.ex.
+    image: lblod/scope-of-operation-service:0.2.0
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
   change-requests:
     # Every edit of organisation data goes through this service (POST /change-requests); see
     # the "Change requests" section of the README and config/authorization/config.lisp.
