@@ -1,7 +1,21 @@
 services:
   identifier:
     ports:
-      - "80:80"
+      - "88:80"
   triplestore:
     ports:
-      - "8890:8890"
+      - "8899:8890"
+
+  mocklogin:
+    image: lblod/mock-login-service:0.7.0
+    environment:
+      GROUP_TYPE: "http://www.w3.org/ns/org#Organization"
+    links:
+      - triplestore:database
+    restart: "no"
+
+  login:
+    restart: "no"
+
+  accountdetail:
+    restart: "no"

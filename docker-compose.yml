@@ -70,3 +70,27 @@ services:
     labels:
       - "logging=true"
     logging: *default-logging
+
+  login:
+    image: lblod/acmidm-login-service:0.12.1.rc-2
+    environment:
+      MU_APPLICATION_AUTH_USERID_CLAIM: ""
+      MU_APPLICATION_GRAPH: ""
+      MU_APPLICATION_AUTH_ROLE_CLAIM: ""
+      MU_APPLICATION_AUTH_DISCOVERY_URL: ""
+      MU_APPLICATION_AUTH_CLIENT_ID: ""
+      MU_APPLICATION_AUTH_REDIRECT_URI: ""
+      MU_APPLICATION_AUTH_CLIENT_SECRET: ""
+      ORGANIZATION_TYPE: "http://www.w3.org/ns/org#Organization"
+      GROUP_TYPE_LABEL: "organizations"
+
+  accountdetail:
+    image: lblod/account-detail-service:0.1.0
+    labels:
+      - "logging=true"
+    environment:
+      MU_APPLICATION_GRAPH: "http://mu.semte.ch/graphs/contacthub/accounts"
+    links:
+      - triplestore:database
+    restart: always
+    logging: *default-logging
