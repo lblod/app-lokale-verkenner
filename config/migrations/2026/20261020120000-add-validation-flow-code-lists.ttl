@@ -1,0 +1,65 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mu: <http://mu.semte.ch/vocabularies/core/> .
+@prefix cr: <http://lblod.data.gift/vocabularies/change-requests/> .
+@prefix scheme: <http://lblod.data.gift/concept-schemes/> .
+@prefix concept: <http://lblod.data.gift/concepts/> .
+
+# The validation flow of the designs (OP-RVS Figma, review of 19 October 2026) adds to the two
+# code lists of change-request-service (20261015120000-add-change-request-code-lists.ttl):
+# two statuses, "Aanvullende informatie gevraagd" (ABB asked the requester for information) and
+# "Afgehandeld" (the approved request is applied: the register holds it; "Goedgekeurd" is now
+# the decision, see 20261020120001), and four action types: the question of ABB, the answer of
+# the requester, the requester's contest of a rejection, and the afhandeling by the service.
+
+# --- Status van een wijzigingsaanvraag ----------------------------------------------------------
+
+concept:f628da38-1583-4bfc-b3f3-eb41a7708944
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "f628da38-1583-4bfc-b3f3-eb41a7708944" ;
+  skos:prefLabel "Aanvullende informatie gevraagd" ;
+  skos:definition "ABB heeft de aanvrager om aanvullende informatie gevraagd; de aanvraag wacht op het antwoord." ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+concept:362d4aee-2fe3-45b3-a7ef-8602b8516bf0
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "362d4aee-2fe3-45b3-a7ef-8602b8516bf0" ;
+  skos:prefLabel "Afgehandeld" ;
+  skos:definition "De aanvraag is goedgekeurd en de wijziging is doorgevoerd in het register." ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+# --- Type van een stap van een wijzigingsaanvraag -------------------------------------------------
+
+concept:f2665331-48f1-4830-a7c7-0d5a692b7b3d
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "f2665331-48f1-4830-a7c7-0d5a692b7b3d" ;
+  skos:prefLabel "Informatievraag" ;
+  skos:definition "ABB vraagt de aanvrager om aanvullende informatie." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:886d2ed1-34c0-4642-b0f2-cd1e1960738e
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "886d2ed1-34c0-4642-b0f2-cd1e1960738e" ;
+  skos:prefLabel "Informatieantwoord" ;
+  skos:definition "De aanvrager bezorgt de gevraagde informatie; de aanvraag wordt opnieuw gevalideerd." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:61e0e81d-bb69-422a-86c9-faa0df69514c
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "61e0e81d-bb69-422a-86c9-faa0df69514c" ;
+  skos:prefLabel "Betwisting" ;
+  skos:definition "De aanvrager betwist de afkeuring, met een reden; de aanvraag wordt opnieuw gevalideerd." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:7f55ec41-b1fe-4145-acf1-15cb2cb13cd2
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "7f55ec41-b1fe-4145-acf1-15cb2cb13cd2" ;
+  skos:prefLabel "Afhandeling" ;
+  skos:definition "Het doorvoeren van de goedgekeurde wijziging in het register, door de dienst." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .

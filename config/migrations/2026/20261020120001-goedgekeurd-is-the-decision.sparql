@@ -1,0 +1,19 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# "Goedgekeurd" is the decision; the apply that follows ends in "Afgehandeld"
+# (20261020120000-add-validation-flow-code-lists.ttl).
+DELETE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://lblod.data.gift/concepts/ca080d1f-f71c-4fe6-a4ed-a13fe1112989> skos:definition ?definition .
+  }
+}
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://lblod.data.gift/concepts/ca080d1f-f71c-4fe6-a4ed-a13fe1112989> skos:definition "De aanvraag is goedgekeurd; de wijziging wordt doorgevoerd in het register." .
+  }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://lblod.data.gift/concepts/ca080d1f-f71c-4fe6-a4ed-a13fe1112989> skos:definition ?definition .
+  }
+}

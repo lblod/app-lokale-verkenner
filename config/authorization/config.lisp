@@ -47,6 +47,8 @@
   :generiek "https://data.vlaanderen.be/ns/generiek#"
   :rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   :oslc "http://open-services.net/ns/core#"
+  :code "http://lblod.data.gift/vocabularies/organisatie/"
+  :besluitvorming "https://data.vlaanderen.be/ns/besluitvorming#"
   :cr "http://lblod.data.gift/vocabularies/change-requests/")
 
 
@@ -66,11 +68,11 @@
             ; of the arrow
 
 ;; The same graph, as the change-request service may write it: only the types of its aggregates
-;; (organisations, sites, addresses, contact points, identifiers; see
-;; config/change-requests/change-requests.json). Listing the types also keeps the service's own
-;; records (cr:ChangeRequest, cr:Action, cr:ProposedVersion, cr:RecordState, ...) out of this
-;; graph: sparql-parser writes a quad to every writable graph whose specification matches it, and
-;; "_ -> _" would match them too.
+;; (organisations, sites, addresses, contact points, identifiers, change events with their
+;; results and decisions; see config/change-requests/change-requests.json). Listing the types also
+;; keeps the service's own records (cr:ChangeRequest, cr:Action, cr:ProposedVersion,
+;; cr:RecordState, ...) out of this graph: sparql-parser writes a quad to every writable graph
+;; whose specification matches it, and "_ -> _" would match them too.
 (define-graph organisation-data ("http://mu.semte.ch/graphs/public")
   ("org:Organization" -> _)
   ("besluit:Bestuurseenheid" -> _)
@@ -79,7 +81,12 @@
   ("locn:Address" -> _)
   ("schema:ContactPoint" -> _)
   ("adms:Identifier" -> _)
-  ("generiek:GestructureerdeIdentificator" -> _))
+  ("generiek:GestructureerdeIdentificator" -> _)
+  ;; what a request to register a new organisation or a veranderingsgebeurtenis applies on approval
+  ("org:ChangeEvent" -> _)
+  ("code:VeranderingsgebeurtenisResultaat" -> _)
+  ("besluit:Besluit" -> _)
+  ("besluitvorming:Beslissingsactiviteit" -> _))
 
 ;; Change requests and their versions, the history of every edit. Only the change-request
 ;; service reads and writes it; it decides per request who may see it. Every class the service
