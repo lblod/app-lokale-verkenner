@@ -55,7 +55,12 @@
     },
     "change-event-results": {
       "class": "code:VeranderingsgebeurtenisResultaat",
-      "attributes": {},
+      "attributes": {
+        "resulting-name": {
+          "type": "string",
+          "predicate": "code:resulterendeNaam"
+        }
+      },
       "relationships": {
         "resulting-organization": {
           "predicate": "ext:resultingOrganization",
@@ -108,8 +113,8 @@
           "type": "date",
           "predicate": "http://data.europa.eu/eli/ontology#date_publication"
         },
-        "document-link": {
-          "type": "url",
+        "document-links": {
+          "type": "uri-set",
           "predicate": "foaf:page"
         }
       },
