@@ -12,57 +12,46 @@ The service checks who may edit what (own organisation; ABB edits all), keeps th
 steps and versions in `http://mu.semte.ch/graphs/change-requests`, and applies it to the
 organisation data in `http://mu.semte.ch/graphs/public`. An edit of an organisation's own data is
 applied at once (a change someone made after the form was loaded refuses it with 409, and the
-form is reloaded). A request to register a new organisation or a veranderingsgebeurtenis waits for
-ABB, who approves it, rejects it with a reason or asks for information; the requester answers or
-contests a rejection (`POST /change-requests/:id/steps`). Everyone who is logged in sees every
-request; who submitted it and the texts of its steps are shown to its organisation and ABB only
-(`pendingVisibleTo` in the configuration switches the pending ones to the involved organisations).
+form is reloaded); edits are kept as the history of the data and are not listed with the requests
+unless asked for (`filter[kind]=edit`). A request to register a new organisation or a
+veranderingsgebeurtenis waits for ABB, who approves it, rejects it with a reason or asks for
+information; the requester answers or contests a rejection (`POST /change-requests/:id/steps`).
+Everyone who is logged in sees every request; who submitted it and the texts of its steps are
+shown to its organisation and ABB only (`pendingVisibleTo` in the configuration switches the
+pending ones to the involved organisations).
 
 The resource routes are read-only: `config/authorization/config.lisp` gives no one a write grant
-on the organisation data except the service, through its scope. Its configuration (aggregates and
-their kind, which organisation may request which classification, the ABB organisation, the
-visibility) is `config/change-requests/change-requests.json`. The data it writes (requests,
-steps, proposed versions, record states) is described in the service's README and vocabulary; the
-two code lists it uses, the status of a request and the type of a step, are loaded into the public
-graph by `config/migrations/2026/20261015120000-add-change-request-code-lists.ttl` and
-`20261020120000-add-validation-flow-code-lists.ttl`.
+on the organisation data except the service, through its scope. The one other writer is
+scope-of-operation, which composes a werkingsgebied with mu-auth-sudo, as in OP; the exception and
+what it may write are described in `config.lisp`.
 
-Development, with a checkout of change-request-service next to this repository (`../change-request-service`),
+The service's configuration is `config/change-requests/change-requests.json`: the aggregates and
+their kind, the fields each may change on an organisation (`writable`: the kerngegevens do not
+change the werkingsgebied, the juridische vorm or the bijkomende kwalificaties, which change
+through a veranderingsgebeurtenis), the classifications it registers and as which type
+(`registration`, with the oprichting every new organisation carries and the classifications that
+need no KBO number), which organisation may request which classification ("Wie beheert"), the ABB
+organisation and the visibility. The same file is the service repository's
+`config/change-requests.json`; keep the two equal. The service reads it and the resources model at
+start-up: restart it after a change.
+
+The data it writes (requests, steps, proposed versions, record states) is described in the
+service's README and vocabulary; the two code lists it uses, the status of a request and the type
+of a step, are loaded into the public graph by the migrations
+`config/migrations/2026/20261015120000-add-change-request-code-lists.ttl`,
+`20261020120000-add-validation-flow-code-lists.ttl` and the corrections after them.
+
+## Development
+
+With a checkout of change-request-service next to this repository (`../change-request-service`),
 which `docker-compose.dev.yml` mounts into the template image:
 
     docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 The identifier listens on http://localhost:88 and Virtuoso on http://localhost:8899. Log in through
 mock-login (frontend-lokale-verkenner, or `POST /mock/sessions`), then post change requests. The service's
-`scripts/e2e-mock-login.sh` runs the whole flow against this setup.
+`scripts/e2e-mock-login.sh` runs the whole flow against this setup; run it while nobody else writes
+to the stack.
 
-## mu-project
-
-Bootstrap a mu.semte.ch microservices environment in three easy steps.
-
-## Quickstart an mu-project
-
-> [INFO]
-> This project was created by running `mu project new awesome-project-name`.  If read on GitHub under mu-semtech/mu-project then it is the template repository for a new project, use `mu project new` instead.
-
-Setting up your environment is done in three easy steps:
-1. First configure the running microservices and their names in `docker-compose.yml`
-2. Then, configure how requests are dispatched in `config/dispatcher.ex`
-3. Lastly, simply start the docker-compose.
-
-### Hooking things up with docker-compose
-
-Alter the `docker-compose.yml` file so it contains all microservices you need.  The example content should be clear, but you can find more information in the [Docker Compose documentation](https://docs.docker.com/compose/).  Don't remove the `identifier` and `db` container, they are respectively the entry-point and the database of your application.  Don't forget to link the necessary microservices to the dispatcher and the database to the microservices.
-
-### Configure the dispatcher
-
-Next, alter the file `config/dispatcher/dispatcher.ex` based on the example that is there by default.  Dispatch requests to the necessary microservices based on the names you used for the microservice.
-
-### Boot up the system
-
-Boot your microservices-enabled system using docker-compose.
-
-    cd /path/to/mu-project
-    docker-compose up
-
-You can shut down using `docker-compose stop` and remove everything using `docker-compose rm`.
+Deploying a version: the deploy notes in [CHANGELOG.md](CHANGELOG.md) list, per change, the
+services to restart and the migrations to wait for.
