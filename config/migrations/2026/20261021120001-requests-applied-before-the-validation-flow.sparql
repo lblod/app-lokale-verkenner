@@ -1,0 +1,24 @@
+PREFIX adms: <http://www.w3.org/ns/adms#>
+PREFIX cr: <http://lblod.data.gift/vocabularies/change-requests/>
+
+# Before the validation flow "goedgekeurd" meant "applied"; since
+# 20261020120001-goedgekeurd-is-the-decision.sparql it is the decision, and an applied request is
+# "afgehandeld". The change-request service never leaves a request "goedgekeurd" (the afhandeling
+# follows in the same step), so a request that carries it was applied before the change: it
+# becomes "afgehandeld". Its steps stay as they were recorded.
+DELETE {
+  GRAPH <http://mu.semte.ch/graphs/change-requests> {
+    ?request adms:status <http://lblod.data.gift/concepts/ca080d1f-f71c-4fe6-a4ed-a13fe1112989> .
+  }
+}
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/change-requests> {
+    ?request adms:status <http://lblod.data.gift/concepts/362d4aee-2fe3-45b3-a7ef-8602b8516bf0> .
+  }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/change-requests> {
+    ?request a cr:ChangeRequest ;
+      adms:status <http://lblod.data.gift/concepts/ca080d1f-f71c-4fe6-a4ed-a13fe1112989> .
+  }
+}
