@@ -10,7 +10,7 @@ Every edit of organisation data is a change request, handled by
 [change-request-service](https://github.com/lblod/change-request-service) at `/change-requests`.
 The service checks who may edit what (own organisation; ABB edits all), keeps the request with its
 steps and versions in `http://mu.semte.ch/graphs/change-requests`, and applies it to the
-organisation data in `http://mu.semte.ch/graphs/public`. An edit of an organisation's own data is
+organisation data in `http://mu.semte.ch/graphs/administrative-unit`. An edit of an organisation's own data is
 applied at once (a change someone made after the form was loaded refuses it with 409, and the
 form is reloaded); edits are kept as the history of the data and are not listed with the requests
 unless asked for (`filter[kind]=edit`). A request to register a new organisation or a
@@ -20,8 +20,12 @@ Everyone who is logged in sees every request; who submitted it and the texts of 
 shown to its organisation and ABB only (`pendingVisibleTo` in the configuration switches the
 pending ones to the involved organisations).
 
-The resource routes are read-only: `config/authorization/config.lisp` gives no one a write grant
-on the organisation data except the service, through its scope. The one other writer is
+The organisation data is for logged-in sessions: it is in a graph of its own,
+`http://mu.semte.ch/graphs/administrative-unit` (the graph OP keeps it in), which the `logged-in`
+group reads. A visitor without a session reads the public graph only: the code lists, the
+locations, the mock-login accounts and, of the organisation of a mock account, its type and uuid,
+which the mock-login page needs. The resource routes are read-only: `config/authorization/config.lisp`
+gives no one a write grant on the organisation data except the service, through its scope. The one other writer is
 scope-of-operation, which composes a werkingsgebied with mu-auth-sudo, as in OP; the exception and
 what it may write are described in `config.lisp`.
 

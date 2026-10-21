@@ -61,11 +61,21 @@
 ;; specifications can be folded too.  This could help when building
 ;; indexes.
 
-;; All organisation data, the accounts of mock-login and the code lists. Read side only:
-;; nobody gets a write grant on this spec, so it can stay "any type, any predicate".
+;; The code lists, the locations (werkingsgebieden; scope-of-operation adds composed ones) and the
+;; accounts of mock-login. Everyone reads it, also without a login. Of the organisation of a mock
+;; account it holds the type and the uuid only, which the mock-login page needs before anyone is
+;; logged in and which never change (see the migration that moved the organisation data out). Read
+;; side only: nobody gets a write grant on this spec, so it can stay "any type, any predicate".
 (define-graph public ("http://mu.semte.ch/graphs/public")
   (_ -> _)) ; public allows ANY TYPE -> ANY PREDICATE in the direction
             ; of the arrow
+
+;; The organisation data: the organisations, their sites, addresses, contact points, identifiers
+;; and memberships, the change events with their results and decisions. The same graph as in OP
+;; (app-organization-portal). Every logged-in session reads all of it; a visitor without a session
+;; reads none of it (sparql-parser grants reads per graph, so there is no reading part of it).
+(define-graph organisations ("http://mu.semte.ch/graphs/administrative-unit")
+  (_ -> _))
 
 ;; The same graph, as the change-request service may write it: only the types of its aggregates
 ;; (organisations, sites, addresses, contact points, identifiers, change events with their
@@ -73,7 +83,7 @@
 ;; keeps the service's own records (cr:ChangeRequest, cr:Action, cr:ProposedVersion,
 ;; cr:RecordState, ...) out of this graph: sparql-parser places a quad in a writable graph whose
 ;; specification matches the type of its subject, and "_ -> _" would match them too.
-(define-graph organisation-data ("http://mu.semte.ch/graphs/public")
+(define-graph organisation-data ("http://mu.semte.ch/graphs/administrative-unit")
   ("org:Organization" -> _)
   ("besluit:Bestuurseenheid" -> _)
   ("regorg:RegisteredOrganization" -> _)
@@ -115,6 +125,17 @@
 
 (supply-allowed-group "public")
 
+;; A session with an organisation and a role: what mock-login (and later the login with ACM/IDM)
+;; writes for a user who logged in.
+(supply-allowed-group "logged-in"
+  :parameters ()
+  :query "PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+          PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+          SELECT DISTINCT ?session_group ?session_role WHERE {
+            <SESSION_ID> ext:sessionGroup/mu:uuid ?session_group ;
+                         ext:sessionRole ?session_role .
+          }")
+
 ;; Nobody writes the organisation data directly: every edit is a change request.
 ;; Writes happen only through change-request-service (POST /change-requests), which sends the
 ;; scope below and enforces who may edit what (its policies/ folder). Reads of change requests
@@ -135,11 +156,15 @@
        :to-graph public
        :for-allowed-group "public")
 
+(grant (read)
+       :to-graph organisations
+       :for-allowed-group "logged-in")
+
 ;; The exception: the change-request service. The scope header can only come from a service in
 ;; the stack: mu-identifier (1.11.0 and later) strips mu-auth-scope from what a browser sends.
 (with-scope "http://services.lblod.info/change-request-service"
   (grant (read)
-         :to-graph (public sessions)
+         :to-graph (public organisations sessions)
          :for-allowed-group "public")
   (grant (read write)
          :to-graph (organisation-data change-requests)
