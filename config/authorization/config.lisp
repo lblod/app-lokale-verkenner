@@ -71,8 +71,8 @@
 ;; (organisations, sites, addresses, contact points, identifiers, change events with their
 ;; results and decisions; see config/change-requests/change-requests.json). Listing the types also
 ;; keeps the service's own records (cr:ChangeRequest, cr:Action, cr:ProposedVersion,
-;; cr:RecordState, ...) out of this graph: sparql-parser writes a quad to every writable graph
-;; whose specification matches it, and "_ -> _" would match them too.
+;; cr:RecordState, ...) out of this graph: sparql-parser places a quad in a writable graph whose
+;; specification matches the type of its subject, and "_ -> _" would match them too.
 (define-graph organisation-data ("http://mu.semte.ch/graphs/public")
   ("org:Organization" -> _)
   ("besluit:Bestuurseenheid" -> _)
@@ -120,6 +120,17 @@
 ;; scope below and enforces who may edit what (its policies/ folder). Reads of change requests
 ;; are filtered per organisation by that service, not here.
 ;; A direct POST, PATCH or DELETE on a resource route has no writable graph and is refused.
+;;
+;; One exception does not go through these grants: scope-of-operation (lblod/scope-of-operation-
+;; service, as in OP) writes the public graph with mu-auth-sudo. POST /scope-of-operation/scope-for-
+;; locations creates a composed location (a werkingsgebied made of several locations, labelled
+;; "A, B") when none exists yet; its other routes only read. The dispatcher routes it for anyone,
+;; also without a login, and the creation and change-event forms call it before their request is
+;; submitted, so a refused request leaves the location it composed behind. It writes the new
+;; location and links the locations it contains to it (geo:sfWithin); in OP's data some locations
+;; share their URI with a bestuurseenheid, so that link can also set the located-within of an
+;; organisation. Composing the location inside the apply of the request, or a session check in
+;; that service, would close this.
 (grant (read)
        :to-graph public
        :for-allowed-group "public")
