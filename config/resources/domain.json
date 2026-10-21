@@ -1055,11 +1055,11 @@
       "attributes": {
         "start-date": {
           "predicate": "time:hasBeginning",
-          "type": "datetime"
+          "type": "date"
         },
         "end-date": {
           "predicate": "time:hasEnd",
-          "type": "datetime"
+          "type": "date"
         }
       },
       "new-resource-base": "http://data.lblod.info/id/periode/"
