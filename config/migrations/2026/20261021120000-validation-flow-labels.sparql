@@ -1,0 +1,24 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# The labels as the request screens show them: "Informatie gevraagd" for the status of a request
+# that waits for the requester's answer, and the goedkeuring as the decision, which the
+# afhandeling carries out (20261020120000-add-validation-flow-code-lists.ttl,
+# 20261020120001-goedgekeurd-is-the-decision.sparql).
+DELETE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://lblod.data.gift/concepts/f628da38-1583-4bfc-b3f3-eb41a7708944> skos:prefLabel ?label .
+    <http://lblod.data.gift/concepts/bb2bb632-fc9f-41c6-a1eb-8f50e4008551> skos:definition ?definition .
+  }
+}
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://lblod.data.gift/concepts/f628da38-1583-4bfc-b3f3-eb41a7708944> skos:prefLabel "Informatie gevraagd" .
+    <http://lblod.data.gift/concepts/bb2bb632-fc9f-41c6-a1eb-8f50e4008551> skos:definition "Het goedkeuren van de aanvraag; de dienst voert de wijziging daarna door (afhandeling)." .
+  }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    OPTIONAL { <http://lblod.data.gift/concepts/f628da38-1583-4bfc-b3f3-eb41a7708944> skos:prefLabel ?label . }
+    OPTIONAL { <http://lblod.data.gift/concepts/bb2bb632-fc9f-41c6-a1eb-8f50e4008551> skos:definition ?definition . }
+  }
+}
