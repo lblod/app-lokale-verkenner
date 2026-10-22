@@ -1,0 +1,78 @@
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX regorg: <http://www.w3.org/ns/regorg#>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX locn: <http://www.w3.org/ns/locn#>
+PREFIX schema: <http://schema.org/>
+PREFIX adms: <http://www.w3.org/ns/adms#>
+PREFIX generiek: <https://data.vlaanderen.be/ns/generiek#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX code: <http://lblod.data.gift/vocabularies/organisatie/>
+PREFIX besluitvorming: <https://data.vlaanderen.be/ns/besluitvorming#>
+PREFIX person: <http://www.w3.org/ns/person#>
+PREFIX ch: <http://data.lblod.info/vocabularies/contacthub/>
+PREFIX mandaat: <http://data.vlaanderen.be/ns/mandaat#>
+PREFIX lblodlg: <http://data.lblod.info/vocabularies/leidinggevenden/>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+# The organisation data leaves the public graph, which everyone reads, also without a login, for a
+# graph of its own that logged-in sessions read: http://mu.semte.ch/graphs/administrative-unit,
+# the graph OP keeps it in (see config/authorization/config.lisp). Every triple of a record of
+# these types moves: the organisations (with their KBO mirrors and governing bodies), their sites,
+# addresses, contact points, identifiers, memberships and periods, the change events with their
+# results and decisions, and the persons in a position. The code lists, the locations and the
+# accounts of mock-login stay in the public graph. On a fresh stack the seed migrations load into
+# the public graph first; this one moves what they loaded. Of the organisation of a mock account
+# the public graph keeps the type and the uuid (the last update below): the mock-login page lists
+# the accounts with their organisation before anyone is logged in, and mock-login checks both when
+# it creates a session. They never change, so the two graphs cannot disagree on them.
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/administrative-unit> { ?s ?p ?o . }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    VALUES ?type {
+      org:Organization besluit:Bestuurseenheid regorg:RegisteredOrganization ext:KboOrganisatie besluit:Bestuursorgaan
+      org:Site locn:Address schema:ContactPoint adms:Identifier generiek:GestructureerdeIdentificator
+      org:Membership time:ProperInterval
+      org:ChangeEvent code:VeranderingsgebeurtenisResultaat besluit:Besluit besluitvorming:Beslissingsactiviteit
+      person:Person org:Post ch:AgentInPositie mandaat:Mandataris mandaat:Mandaat lblodlg:Functionaris lblodlg:Bestuursfunctie
+    }
+    ?s a ?type ;
+      ?p ?o .
+  }
+};
+
+DELETE {
+  GRAPH <http://mu.semte.ch/graphs/public> { ?s ?p ?o . }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/administrative-unit> {
+    VALUES ?type {
+      org:Organization besluit:Bestuurseenheid regorg:RegisteredOrganization ext:KboOrganisatie besluit:Bestuursorgaan
+      org:Site locn:Address schema:ContactPoint adms:Identifier generiek:GestructureerdeIdentificator
+      org:Membership time:ProperInterval
+      org:ChangeEvent code:VeranderingsgebeurtenisResultaat besluit:Besluit besluitvorming:Beslissingsactiviteit
+      person:Person org:Post ch:AgentInPositie mandaat:Mandataris mandaat:Mandaat lblodlg:Functionaris lblodlg:Bestuursfunctie
+    }
+    ?s a ?type .
+  }
+  GRAPH <http://mu.semte.ch/graphs/public> { ?s ?p ?o . }
+}
+;
+
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/public> { ?org a org:Organization ; mu:uuid ?uuid . }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    ?person foaf:member ?org ;
+      foaf:account ?account .
+    ?account foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> .
+  }
+  GRAPH <http://mu.semte.ch/graphs/administrative-unit> {
+    ?org a org:Organization ;
+      mu:uuid ?uuid .
+  }
+}

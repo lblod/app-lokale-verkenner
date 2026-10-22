@@ -19,3 +19,22 @@ services:
 
   accountdetail:
     restart: "no"
+
+  change-requests:
+    image: semtech/mu-javascript-template:1.9.1
+    environment:
+      NODE_ENV: "development"
+      # the template image does not carry the ENV of the service's Dockerfile
+      MAX_BODY_SIZE: "5mb"
+    volumes:
+      - ../change-request-service:/app
+    restart: "no"
+
+  kbo-data-sync:
+    restart: "no"
+
+  search:
+    restart: "no"
+
+  elasticsearch:
+    restart: "no"

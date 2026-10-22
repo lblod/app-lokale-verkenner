@@ -1,0 +1,41 @@
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+# A second mock-login account for ABB (Agentschap Binnenlands Bestuur), so a demo or a test can
+# show one ABB user validating what another ABB user registered. The first one comes with
+# 20261013120005-add-bestuurseenheden-accounts.sparql. Like that one, the person and the account
+# are in the public graph and in ABB's organisation graph: mock-login reads the session's account
+# from the organisation graph and refuses the session without it.
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    <http://data.lblod.info/id/persoon/547b6565-ed1b-4181-89df-36d7b6af220a> a foaf:Person ;
+      mu:uuid "547b6565-ed1b-4181-89df-36d7b6af220a" ;
+      foaf:firstName "Validator" ;
+      foaf:familyName "Agentschap Binnenlands Bestuur" ;
+      foaf:member ?abb ;
+      foaf:account <http://data.lblod.info/id/account/4a701d4e-f71d-4f7d-bf37-c8e1bd77c278> .
+    <http://data.lblod.info/id/account/4a701d4e-f71d-4f7d-bf37-c8e1bd77c278> a foaf:OnlineAccount ;
+      mu:uuid "4a701d4e-f71d-4f7d-bf37-c8e1bd77c278" ;
+      foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+      ext:sessionRole "Gebruiker" .
+  }
+  GRAPH <http://mu.semte.ch/graphs/organizations/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> {
+    <http://data.lblod.info/id/persoon/547b6565-ed1b-4181-89df-36d7b6af220a> a foaf:Person ;
+      mu:uuid "547b6565-ed1b-4181-89df-36d7b6af220a" ;
+      foaf:firstName "Validator" ;
+      foaf:familyName "Agentschap Binnenlands Bestuur" ;
+      foaf:member ?abb ;
+      foaf:account <http://data.lblod.info/id/account/4a701d4e-f71d-4f7d-bf37-c8e1bd77c278> .
+    <http://data.lblod.info/id/account/4a701d4e-f71d-4f7d-bf37-c8e1bd77c278> a foaf:OnlineAccount ;
+      mu:uuid "4a701d4e-f71d-4f7d-bf37-c8e1bd77c278" ;
+      foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+      ext:sessionRole "Gebruiker" .
+  }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    BIND(<http://data.lblod.info/id/bestuurseenheden/141d9d6b-54af-4d17-b313-8d1c30bc3f5b> AS ?abb)
+    ?abb mu:uuid "141d9d6b-54af-4d17-b313-8d1c30bc3f5b" .
+  }
+}

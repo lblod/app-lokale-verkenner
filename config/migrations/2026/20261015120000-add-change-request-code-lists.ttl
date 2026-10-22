@@ -1,0 +1,115 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mu: <http://mu.semte.ch/vocabularies/core/> .
+@prefix cr: <http://lblod.data.gift/vocabularies/change-requests/> .
+@prefix scheme: <http://lblod.data.gift/concept-schemes/> .
+@prefix concept: <http://lblod.data.gift/concepts/> .
+
+# The two code lists of change-request-service: the status of a change request (adms:status of
+# the request, and of each step: the status after it) and the type of a step (dct:type of a
+# cr:Action). The service knows these URIs (constants.js); they are published here so the data
+# describes itself. Labels without language tag, like the other code lists of this stack.
+
+# --- Status van een wijzigingsaanvraag ----------------------------------------------------------
+
+scheme:e8274055-0834-4511-8b84-a2af41055633
+  rdf:type skos:ConceptScheme ;
+  mu:uuid "e8274055-0834-4511-8b84-a2af41055633" ;
+  skos:prefLabel "Status van een wijzigingsaanvraag" .
+
+concept:d57aff85-43ce-4bd0-b962-6bd1b1fbc4b6
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "d57aff85-43ce-4bd0-b962-6bd1b1fbc4b6" ;
+  skos:prefLabel "Ingediend" ;
+  skos:definition "De aanvraag is ingediend en wacht op een beslissing." ;
+  skos:closeMatch <https://data.vlaanderen.be/id/concept/StatusVlaamseCode/Ingediend> ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+concept:ca080d1f-f71c-4fe6-a4ed-a13fe1112989
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "ca080d1f-f71c-4fe6-a4ed-a13fe1112989" ;
+  skos:prefLabel "Goedgekeurd" ;
+  skos:definition "De aanvraag is goedgekeurd en de wijziging is doorgevoerd." ;
+  skos:closeMatch <https://data.vlaanderen.be/id/concept/StatusVlaamseCode/Goedgekeurd> ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+concept:b53c0c43-aa7c-4eb4-b113-81a370c21014
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "b53c0c43-aa7c-4eb4-b113-81a370c21014" ;
+  skos:prefLabel "Afgekeurd" ;
+  skos:definition "De aanvraag is afgekeurd; de wijziging is niet doorgevoerd." ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+concept:3dd55ff1-c322-4660-819d-4641de440544
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "3dd55ff1-c322-4660-819d-4641de440544" ;
+  skos:prefLabel "Ingetrokken" ;
+  skos:definition "De aanvraag is ingetrokken; de wijziging is niet doorgevoerd." ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+concept:b610e2dc-902c-4874-b65e-78b7f6411c05
+  rdf:type skos:Concept , cr:ChangeRequestStatus ;
+  mu:uuid "b610e2dc-902c-4874-b65e-78b7f6411c05" ;
+  skos:prefLabel "Mislukt" ;
+  skos:definition "De aanvraag is goedgekeurd, maar het doorvoeren van de wijziging is mislukt." ;
+  skos:inScheme scheme:e8274055-0834-4511-8b84-a2af41055633 ;
+  skos:topConceptOf scheme:e8274055-0834-4511-8b84-a2af41055633 .
+
+# --- Type van een stap van een wijzigingsaanvraag -------------------------------------------------
+
+scheme:65c4cf4a-f29f-45c9-aa71-498969638e42
+  rdf:type skos:ConceptScheme ;
+  mu:uuid "65c4cf4a-f29f-45c9-aa71-498969638e42" ;
+  skos:prefLabel "Type van een stap van een wijzigingsaanvraag" .
+
+concept:9ea4e33a-1745-4159-9a24-5706bad7ab38
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "9ea4e33a-1745-4159-9a24-5706bad7ab38" ;
+  skos:prefLabel "Indiening" ;
+  skos:definition "Het indienen van de aanvraag." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:bb2bb632-fc9f-41c6-a1eb-8f50e4008551
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "bb2bb632-fc9f-41c6-a1eb-8f50e4008551" ;
+  skos:prefLabel "Goedkeuring" ;
+  skos:definition "Het goedkeuren van de aanvraag, waarbij de wijziging wordt doorgevoerd." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:765d7fc7-b078-4273-84c1-a7a84b61498e
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "765d7fc7-b078-4273-84c1-a7a84b61498e" ;
+  skos:prefLabel "Afkeuring" ;
+  skos:definition "Het afkeuren van de aanvraag, met een reden." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:850f35c4-4333-4e6f-ab5a-ea3a2355cc5b
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "850f35c4-4333-4e6f-ab5a-ea3a2355cc5b" ;
+  skos:prefLabel "Intrekking" ;
+  skos:definition "Het intrekken van de aanvraag." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:942ed957-87e0-477e-9afe-1bc0aedd6771
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "942ed957-87e0-477e-9afe-1bc0aedd6771" ;
+  skos:prefLabel "Hertoepassing" ;
+  skos:definition "Het opnieuw doorvoeren van een goedgekeurde aanvraag waarvan het doorvoeren mislukte." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
+
+concept:814430cf-ccb2-40b9-a057-d8a9cbc6bfdb
+  rdf:type skos:Concept , cr:ActionType ;
+  mu:uuid "814430cf-ccb2-40b9-a057-d8a9cbc6bfdb" ;
+  skos:prefLabel "Wijziging" ;
+  skos:definition "Het wijzigen van een ingediende aanvraag (voorbehouden, nog niet in gebruik)." ;
+  skos:inScheme scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 ;
+  skos:topConceptOf scheme:65c4cf4a-f29f-45c9-aa71-498969638e42 .
