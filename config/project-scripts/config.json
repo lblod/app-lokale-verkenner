@@ -1,0 +1,24 @@
+{
+  "version": "0.2",
+  "scripts": [
+    {
+      "documentation": {
+        "command": "import-from-op",
+        "description": "insert an OP dump into graphs/administrative-unit and verify it",
+        "arguments": [
+          "--dump DIR",
+          "--dry-run"
+        ]
+      },
+      "environment": {
+        "image": "python:3.12-bookworm",
+        "interactive": false,
+        "script": "import-from-op/run.sh",
+        "join_networks": true
+      },
+      "mounts": {
+        "app": "/app/"
+      }
+    }
+  ]
+}

@@ -94,3 +94,12 @@ services:
       - triplestore:database
     restart: always
     logging: *default-logging
+
+  project-scripts:
+    image: semtech/simple-script-store:1.0.0
+    volumes:
+      - ./config/project-scripts/:/app/scripts/
+    restart: "no"
+    labels:
+      - "logging=true"
+    logging: *default-logging
