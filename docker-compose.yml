@@ -107,6 +107,44 @@ services:
     restart: always
     logging: *default-logging
 
+  kbo-data-sync:
+    # The KBO data of an organisation (ext:KboOrganisatie, the "Gegevens uit KBO" of the
+    # kerngegevens page) from Wegwijs, as in OP: the frontend posts /kbo-data-sync/<structured
+    # identifier> after a save with a KBO number, and the service heals every organisation with a
+    # KBO number nightly (CRON_PATTERN). It writes the organisation graph with mu-auth-sudo: see
+    # the exceptions in config/authorization/config.lisp. The dispatcher routes /kbo-data-sync.
+    image: lblod/sync-wegwijs-organization-service:2.0.5
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  search:
+    # mu-search, for the organisations overview (/search/organizations): one index, the
+    # organisations as a logged-in session reads them (config/search/config.json). The
+    # delta-notifier keeps it up to date (config/delta/rules.js); after a change of the search
+    # configuration or a migration of organisation data, rebuild it (see the README).
+    image: semtech/mu-search:0.12.1
+    volumes:
+      - ./config/search:/config
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  elasticsearch:
+    # Elasticsearch 9, the backend of mu-search. It does not run as root: ./data/elasticsearch
+    # must exist and be writable by uid 1000 before the first start (see the README).
+    image: semtech/mu-search-elastic-backend:1.3.1
+    volumes:
+      - ./data/elasticsearch/:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
   change-requests:
     # Every edit of organisation data goes through this service (POST /change-requests); see
     # the "Change requests" section of the README and config/authorization/config.lisp.

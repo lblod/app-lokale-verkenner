@@ -6,3 +6,5 @@
 !/data/db/toLoad/*
 
 docker-compose.override.yml
+/data/elasticsearch/**
+/config/search/update-handler.store

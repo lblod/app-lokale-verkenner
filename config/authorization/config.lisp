@@ -142,9 +142,9 @@
 ;; are filtered per organisation by that service, not here.
 ;; A direct POST, PATCH or DELETE on a resource route has no writable graph and is refused.
 ;;
-;; One exception does not go through these grants: scope-of-operation (lblod/scope-of-operation-
-;; service, as in OP) writes the public graph with mu-auth-sudo. POST /scope-of-operation/scope-for-
-;; locations creates a composed location (a werkingsgebied made of several locations, labelled
+;; Two exceptions do not go through these grants, both as in OP. scope-of-operation (lblod/scope-
+;; of-operation-service) writes the public graph with mu-auth-sudo. POST /scope-of-operation/scope-
+;; for-locations creates a composed location (a werkingsgebied made of several locations, labelled
 ;; "A, B") when none exists yet; its other routes only read. The dispatcher routes it for anyone,
 ;; also without a login, and the creation and change-event forms call it before their request is
 ;; submitted, so a refused request leaves the location it composed behind. It writes the new
@@ -152,6 +152,12 @@
 ;; share their URI with a bestuurseenheid, so that link can also set the located-within of an
 ;; organisation. Composing the location inside the apply of the request, or a session check in
 ;; that service, would close this.
+;; kbo-data-sync (lblod/sync-wegwijs-organization-service) writes the organisation graph with
+;; mu-auth-sudo: the KBO data of an organisation (ext:KboOrganisatie, linked with owl:sameAs) and
+;; its OVO number (a generiek:GestructureerdeIdentificator), fetched from Wegwijs when the frontend
+;; posts /kbo-data-sync/<structured identifier> after a save with a KBO number, and nightly for
+;; every organisation with one. The dispatcher routes it for anyone too. It never writes the
+;; fields a change request changes, so the history of the requests stays complete for those.
 (grant (read)
        :to-graph public
        :for-allowed-group "public")

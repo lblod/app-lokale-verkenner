@@ -25,9 +25,28 @@ The organisation data is for logged-in sessions: it is in a graph of its own,
 group reads. A visitor without a session reads the public graph only: the code lists, the
 locations, the mock-login accounts and, of the organisation of a mock account, its type and uuid,
 which the mock-login page needs. The resource routes are read-only: `config/authorization/config.lisp`
-gives no one a write grant on the organisation data except the service, through its scope. The one other writer is
-scope-of-operation, which composes a werkingsgebied with mu-auth-sudo, as in OP; the exception and
-what it may write are described in `config.lisp`.
+gives no one a write grant on the organisation data except the service, through its scope. Two
+other services write with mu-auth-sudo, as in OP: scope-of-operation, which composes a
+werkingsgebied, and kbo-data-sync, which fetches the KBO data of an organisation from Wegwijs
+after a save with a KBO number and nightly; the exceptions and what each may write are described
+in `config.lisp`.
+
+## Search
+
+The organisations overview and the organisation filters search `/search/organizations`, served by
+mu-search on Elasticsearch. `config/search/config.json` defines the one index: the organisations as
+a logged-in session reads them (the organisation graph and the public graph together: the
+classification labels and the locations are in the public graph), OP's organisation index without
+the worship types. The delta-notifier keeps it up to date (`config/delta/rules.js`). After a
+change of the search configuration or a migration of organisation data (the migrations write
+Virtuoso directly, so mu-search does not see them), rebuild it:
+
+    /bin/bash scripts/reset-elastic.sh
+
+Elasticsearch 9 does not run as root, so `data/elasticsearch` must exist and be writable by uid
+1000 before the first `docker compose up` (which otherwise creates it as root, and Elasticsearch
+dies on `node.lock`): `mkdir -p data/elasticsearch` and, on a server, `chown 1000
+data/elasticsearch`. The script empties the directory but keeps it.
 
 The service's configuration is `config/change-requests/change-requests.json`: the aggregates and
 their kind, the fields each may change on an organisation (`writable`: the kerngegevens do not
@@ -55,7 +74,8 @@ which `docker-compose.dev.yml` mounts into the template image:
 The identifier listens on http://localhost:88 and Virtuoso on http://localhost:8899. Log in through
 mock-login (frontend-lokale-verkenner, or `POST /mock/sessions`), then post change requests. The service's
 `scripts/e2e-mock-login.sh` runs the whole flow against this setup; run it while nobody else writes
-to the stack.
+to the stack. The organisations overview needs the search index: build it with
+`scripts/reset-elastic.sh` once the migrations ran (see Search).
 
 Deploying a version: the deploy notes in [CHANGELOG.md](CHANGELOG.md) list, per change, the
 services to restart and the migrations to wait for.
