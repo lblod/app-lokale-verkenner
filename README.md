@@ -28,3 +28,41 @@ Boot your microservices-enabled system using docker-compose.
     docker-compose up
 
 You can shut down using `docker-compose stop` and remove everything using `docker-compose rm`.
+
+## Sync data from OP
+
+RVS is filled from OP's non-worship organisation data. Two `mu` commands and one manual
+file move:
+
+```sh
+# in OP's project: start the store, then write data/dumps/<stamp>/
+docker compose up -d triplestore project-scripts
+mu script project-scripts export-to-rvs
+
+# move data/dumps/<stamp>/ to this project's data/dumps/ (manual: separate compose networks)
+mkdir -p data/dumps && cp -r <OP>/data/dumps/<stamp> data/dumps/
+
+# in this project
+docker compose up -d triplestore project-scripts
+mu script project-scripts import-from-op --dump data/dumps/<stamp>
+```
+
+Prerequisites:
+
+- the triplestore and the `project-scripts` container are running
+  (`docker compose up -d triplestore project-scripts`);
+- the dump folder lives inside this project, at `data/dumps/<stamp>/` — `--dump` takes that
+  folder (it holds `op-rvs.nt` and `manifest.json`), and only this project is mounted in the
+  script container, so a path into OP's checkout does not work;
+- the dev stack mounts `config/migrations-local/` (in `docker-compose.dev.yml`), so the
+  seed migrations that would duplicate the dump stay out of the way (see
+  `config/project-scripts/import-from-op/README.md`);
+- a read rule for `graphs/administrative-unit` exists in `config/authorization/`. Without
+  it the import succeeds but the UI shows nothing.
+
+A fresh dev database has no unit seeds and no unit-keyed mock-login accounts until a dump
+is imported; only the mock-EA account exists. A developer who wants the seeds without a
+dump drops the `migrations` mount from their local override.
+
+The import is additive and one-shot. Full procedure, flags, dry-run limits and the moved
+migrations: `config/project-scripts/import-from-op/README.md`.

@@ -19,3 +19,10 @@ services:
 
   accountdetail:
     restart: "no"
+
+  # Local development imports an OP dump, so the seed migrations for units,
+  # bodies and codelists stay out of the way. Compose replaces a service's
+  # volumes list, so this single mount is the whole override.
+  migrations:
+    volumes:
+      - ./config/migrations-local:/data/migrations

@@ -1,0 +1,4 @@
+# The number of triples of one class in a graph.
+SELECT (COUNT(*) AS ?c) WHERE {
+  GRAPH @GRAPH@ { ?s rdf:type @TYPE@ }
+}

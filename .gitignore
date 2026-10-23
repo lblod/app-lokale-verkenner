@@ -1,7 +1,11 @@
+# General
+.env
+
 # Virtuoso files /data/db
 /data/db/*
 /data/authorization/*
 /data/db/virtuoso.ini
+/data/dumps/
 !/data/db/toLoad
 !/data/db/toLoad/*
 
