@@ -1,0 +1,71 @@
+PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
+PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
+PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX org: <http://www.w3.org/ns/org#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# DRAFT (RVS-40). Mock-login accounts for the organisations an OP dump brought in.
+#
+# 20261013120005-add-bestuurseenheden-accounts keys on units in the public graph, where
+# the seed migrations put them. An environment filled by import-from-op has its units in
+# http://mu.semte.ch/graphs/administrative-unit only, so that migration (and the second
+# ABB account of 20261021120002) inserts nothing there and nobody but the mock EA can log
+# in. This one does the same work keyed on the import graph, in the same shape:
+#   1. a person and an account per unit, in the public graph (the mock-login page lists
+#      them) and in the organisation's graph (mock-login reads the session's account there);
+#   2. the type and the uuid of each such organisation in the public graph, as
+#      20261021160000-organisation-data-out-of-the-public-graph keeps them for the seeded
+#      ones: the mock-login page shows the organisation before anyone is logged in.
+# Idempotent: the IRIs are derived from the organisation IRI, as before. Runs after the
+# import; on a seed environment it finds nothing new (same IRIs, triples are a set).
+
+INSERT {
+  GRAPH <http://mu.semte.ch/graphs/public> {
+    ?person a foaf:Person ;
+      mu:uuid ?personUuid ;
+      foaf:firstName ?classificationName ;
+      foaf:familyName ?organizationName ;
+      foaf:member ?organization ;
+      foaf:account ?account .
+
+    ?account a foaf:OnlineAccount ;
+      mu:uuid ?accountUuid ;
+      foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+      ext:sessionRole "Gebruiker" .
+
+    ?organization a org:Organization ;
+      mu:uuid ?organizationUuid .
+  }
+  GRAPH ?organizationGraph {
+    ?person a foaf:Person ;
+      mu:uuid ?personUuid ;
+      foaf:firstName ?classificationName ;
+      foaf:familyName ?organizationName ;
+      foaf:member ?organization ;
+      foaf:account ?account .
+
+    ?account a foaf:OnlineAccount ;
+      mu:uuid ?accountUuid ;
+      foaf:accountServiceHomepage <https://github.com/lblod/mock-login-service> ;
+      ext:sessionRole "Gebruiker" .
+  }
+}
+WHERE {
+  GRAPH <http://mu.semte.ch/graphs/administrative-unit> {
+    ?organization a besluit:Bestuurseenheid, org:Organization ;
+      mu:uuid ?organizationUuid ;
+      skos:prefLabel ?organizationName ;
+      org:classification ?classification .
+  }
+  ?classification skos:prefLabel ?classificationName .
+
+  FILTER(LANG(?organizationName) = "" || LANGMATCHES(LANG(?organizationName), "nl"))
+  FILTER(LANG(?classificationName) = "" || LANGMATCHES(LANG(?classificationName), "nl"))
+
+  BIND(MD5(STR(?organization)) AS ?personUuid)
+  BIND(MD5(CONCAT(STR(?organization), "mock-login-account")) AS ?accountUuid)
+  BIND(IRI(CONCAT("http://data.lblod.info/id/persoon/", ?personUuid)) AS ?person)
+  BIND(IRI(CONCAT("http://data.lblod.info/id/account/", ?accountUuid)) AS ?account)
+  BIND(IRI(CONCAT("http://mu.semte.ch/graphs/organizations/", STR(?organizationUuid))) AS ?organizationGraph)
+}
