@@ -20,9 +20,11 @@ services:
   accountdetail:
     restart: "no"
 
-  # Local development imports an OP dump, so the seed migrations for units,
-  # bodies and codelists stay out of the way. Compose replaces a service's
-  # volumes list, so this single mount is the whole override.
+  # The seed migrations for units and classification codes, next to the shared
+  # set (mu-migrations reads subfolders), as app-organization-portal mounts its
+  # config/dev-migrations. A local stack that imports an OP dump instead must not
+  # run them: comment this mount out before the first start (see
+  # config/project-scripts/import-from-op/README.md, "Conflicting migrations").
   migrations:
     volumes:
-      - ./config/migrations-local:/data/migrations
+      - ./config/dev-migrations:/data/migrations/dev/

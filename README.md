@@ -54,15 +54,17 @@ Prerequisites:
 - the dump folder lives inside this project, at `data/dumps/<stamp>/` — `--dump` takes that
   folder (it holds `op-rvs.nt` and `manifest.json`), and only this project is mounted in the
   script container, so a path into OP's checkout does not work;
-- the dev stack mounts `config/migrations-local/` (in `docker-compose.dev.yml`), so the
-  seed migrations that would duplicate the dump stay out of the way (see
-  `config/project-scripts/import-from-op/README.md`);
+- the seed migrations for units and classification codes live in `config/dev-migrations/`,
+  which `docker-compose.dev.yml` mounts next to the shared set for local development;
+  a local stack that imports a dump runs without that mount (see
+  `config/project-scripts/import-from-op/README.md`, "Conflicting migrations");
 - a read rule for `graphs/administrative-unit` exists in `config/authorization/`. Without
   it the import succeeds but the UI shows nothing.
 
-A fresh dev database has no unit seeds and no unit-keyed mock-login accounts until a dump
-is imported; only the mock-EA account exists. A developer who wants the seeds without a
-dump drops the `migrations` mount from their local override.
+A fresh dev database gets the seeded units and their mock-login accounts from
+`config/dev-migrations/`; a developer who imports a dump instead comments that mount out
+before the first start, and the accounts come from the migration that keys on the import
+graph.
 
 The import is additive and one-shot. Full procedure, flags, dry-run limits and the moved
 migrations: `config/project-scripts/import-from-op/README.md`.

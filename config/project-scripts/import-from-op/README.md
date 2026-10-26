@@ -106,11 +106,14 @@ RVS's migrations seed organisations, governing bodies, codelists and mock-login 
 An environment that imports a dump must not also run the seeds for organisations, bodies
 and codelists — they add a second copy of data the dump already brings.
 
-The shared folder `config/migrations/` stays intact for environments without a dump. The
-conflicting seeds live in `config/migrations-local/`, which `docker-compose.dev.yml`
-mounts instead of `config/migrations/` for local development. It is committed, not
-git-ignored: the moved files are copies of committed migrations, and keeping them in git
-makes the list reviewable.
+The shared folder `config/migrations/` holds what every environment runs. The conflicting
+seeds live in `config/dev-migrations/`, which `docker-compose.dev.yml` mounts at
+`/data/migrations/dev/` next to the shared set, as app-organization-portal does with its
+`config/dev-migrations/`: a local stack without a dump gets the seeds, DEV, QA and PRD
+never see them. A local stack that imports a dump comments that mount out in
+`docker-compose.dev.yml` before its first start. The folder is committed, not git-ignored:
+the moved files are copies of committed migrations, and keeping them in git makes the list
+reviewable.
 
 | Migration | Why it moves |
 | --- | --- |
