@@ -1,0 +1,258 @@
+{
+  "automatic_index_updates": true,
+  "persist_indexes": true,
+  "number_of_threads": 6,
+  "eager_indexing_groups": [
+    [
+      {
+        "variables": [],
+        "name": "logged-in"
+      },
+      {
+        "variables": [],
+        "name": "public"
+      }
+    ]
+  ],
+  "default_settings": {
+    "analysis": {
+      "normalizer": {
+        "custom_sort_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": [
+            "lowercase",
+            "trim",
+            "asciifolding"
+          ]
+        },
+        "identifier_normalizer": {
+          "type": "custom",
+          "char_filter": [
+            "identifier_alphanumeric_filter"
+          ],
+          "filter": [
+            "lowercase",
+            "trim",
+            "asciifolding"
+          ]
+        }
+      },
+      "char_filter": {
+        "identifier_alphanumeric_filter": {
+          "type": "pattern_replace",
+          "pattern": "[^a-zA-Z0-9]",
+          "replacement": ""
+        }
+      }
+    }
+  },
+  "types": [
+    {
+      "type": "organization",
+      "on_path": "organizations",
+      "rdf_type": [
+        "http://data.vlaanderen.be/ns/besluit#Bestuurseenheid",
+        "http://www.w3.org/ns/regorg#RegisteredOrganization"
+      ],
+      "properties": {
+        "name": "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "legal_name": "http://www.w3.org/ns/regorg#legalName",
+        "alternative_name": "http://www.w3.org/2004/02/skos/core#altLabel",
+        "source": "http://purl.org/dc/terms/source",
+        "classification_id": [
+          "http://www.w3.org/ns/org#classification",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "classification_name": [
+          "http://www.w3.org/ns/org#classification",
+          "http://www.w3.org/2004/02/skos/core#prefLabel"
+        ],
+        "classification_alternative_name": [
+          "http://www.w3.org/ns/org#classification",
+          "http://www.w3.org/2004/02/skos/core#altLabel"
+        ],
+        "status": [
+          "http://www.w3.org/ns/regorg#orgStatus",
+          "http://www.w3.org/2004/02/skos/core#prefLabel"
+        ],
+        "status_id": [
+          "http://www.w3.org/ns/regorg#orgStatus",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "recognized_worship_type_id": [
+          "http://data.lblod.info/vocabularies/erediensten/typeEredienst",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "recognized_worship_type_name": [
+          "http://data.lblod.info/vocabularies/erediensten/typeEredienst",
+          "http://www.w3.org/2004/02/skos/core#prefLabel"
+        ],
+        "province": [
+          "http://www.w3.org/ns/org#hasPrimarySite",
+          "https://data.vlaanderen.be/ns/organisatie#bestaatUit",
+          "http://www.w3.org/ns/locn#adminUnitL2"
+        ],
+        "municipality": [
+          "http://www.w3.org/ns/org#hasPrimarySite",
+          "https://data.vlaanderen.be/ns/organisatie#bestaatUit",
+          "https://data.vlaanderen.be/ns/adres#gemeentenaam"
+        ],
+        "identifier": [
+          "http://www.w3.org/ns/adms#identifier",
+          "https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator",
+          "https://data.vlaanderen.be/ns/generiek#lokaleIdentificator"
+        ],
+        "operation_area_id": [
+          "http://data.vlaanderen.be/ns/besluit#werkingsgebied",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "operation_area_spatial_id": [
+          "http://purl.org/dc/terms/spatial",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "operation_area_contained_municipalities_id": [
+          "http://data.vlaanderen.be/ns/besluit#werkingsgebied",
+          "^http://www.opengis.net/ont/geosparql#sfWithin",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "operation_area_spatial_contained_municipalities_id": [
+          "http://purl.org/dc/terms/spatial",
+          "^http://www.opengis.net/ont/geosparql#sfWithin",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ],
+        "vendor": [
+          "^http://mu.semte.ch/vocabularies/account/canActOnBehalfOf",
+          "http://mu.semte.ch/vocabularies/core/uuid"
+        ]
+      },
+      "mappings": {
+        "properties": {
+          "name": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "legal_name": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "alternative_name": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "source": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "classification_id": {
+            "type": "text"
+          },
+          "classification_name": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "classification_alternative_name": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "status": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "status_id": {
+            "type": "text"
+          },
+          "recognized_worship_type_id": {
+            "type": "text"
+          },
+          "recognized_worship_type_name": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "province": {
+            "type": "text",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "municipality": {
+            "type": "keyword",
+            "fields": {
+              "field": {
+                "type": "keyword",
+                "normalizer": "custom_sort_normalizer"
+              }
+            }
+          },
+          "identifier": {
+            "type": "text",
+            "fields": {
+              "index": {
+                "type": "keyword",
+                "normalizer": "identifier_normalizer"
+              }
+            }
+          },
+          "operation_area_id": {
+            "type": "text"
+          },
+          "operation_area_spatial_id": {
+            "type": "text"
+          },
+          "operation_area_contained_municipalities_id": {
+            "type": "text"
+          },
+          "operation_area_spatial_contained_municipalities_id": {
+            "type": "text"
+          },
+          "vendor": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  ]
+}
