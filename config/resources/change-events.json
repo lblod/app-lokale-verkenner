@@ -1,0 +1,149 @@
+{
+  "version": "0.1",
+  "prefixes": {
+    "ch": "http://data.lblod.info/vocabularies/contacthub/",
+    "code": "http://lblod.data.gift/vocabularies/organisatie/",
+    "dc_terms": "http://purl.org/dc/terms/",
+    "euro": "http://data.europa.eu/m8g/",
+    "ext": "http://mu.semte.ch/vocabularies/ext/",
+    "org": "http://www.w3.org/ns/org#",
+    "regorg": "http://www.w3.org/ns/regorg#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "foaf": "http://xmlns.com/foaf/0.1/"
+  },
+  "resources": {
+    "change-events": {
+      "class": "org:ChangeEvent",
+      "attributes": {
+        "date": {
+          "type": "date",
+          "predicate": "dc_terms:date"
+        },
+        "description": {
+          "type": "string",
+          "predicate": "dc_terms:description"
+        }
+      },
+      "relationships": {
+        "type": {
+          "predicate": "ch:typeWijziging",
+          "target": "change-event-types",
+          "cardinality": "one"
+        },
+        "resulting-organizations": {
+          "predicate": "org:resultingOrganization",
+          "target": "organizations",
+          "cardinality": "many"
+        },
+        "original-organizations": {
+          "predicate": "org:originalOrganization",
+          "target": "organizations",
+          "cardinality": "many"
+        },
+        "results": {
+          "predicate": "code:veranderingsgebeurtenisResultaat",
+          "target": "change-event-results",
+          "cardinality": "many"
+        },
+        "decision": {
+          "predicate": "http://data.europa.eu/m8g/hasFormalFramework",
+          "target": "decisions",
+          "cardinality": "one"
+        }
+      },
+      "new-resource-base": "http://data.lblod.info/id/veranderingsgebeurtenissen/"
+    },
+    "change-event-results": {
+      "class": "code:VeranderingsgebeurtenisResultaat",
+      "attributes": {
+        "resulting-name": {
+          "type": "string",
+          "predicate": "code:resulterendeNaam"
+        }
+      },
+      "relationships": {
+        "resulting-organization": {
+          "predicate": "ext:resultingOrganization",
+          "target": "organizations",
+          "cardinality": "one"
+        },
+        "status": {
+          "predicate": "code:resulterendeStatus",
+          "target": "organization-status-codes",
+          "cardinality": "one"
+        },
+        "resulting-legal-form": {
+          "predicate": "code:resulterendeRechtsvorm",
+          "target": "concepts",
+          "cardinality": "one"
+        },
+        "resulting-scope": {
+          "predicate": "code:resulterendWerkingsgebied",
+          "target": "locations",
+          "cardinality": "one"
+        },
+        "resulting-additional-qualifications": {
+          "predicate": "code:resulterendeBijkomendeKwalificatie",
+          "target": "additional-qualification-codes",
+          "cardinality": "many"
+        },
+        "result-from": {
+          "predicate": "code:veranderingsgebeurtenisResultaat",
+          "target": "change-events",
+          "cardinality": "one",
+          "inverse": true
+        }
+      },
+      "new-resource-base": "http://lblod.data.info/id/veranderingsgebeurtenis-resultaten/"
+    },
+    "change-event-types": {
+      "class": "code:Veranderingsgebeurtenis",
+      "attributes": {
+        "label": {
+          "type": "string",
+          "predicate": "skos:prefLabel"
+        }
+      },
+      "new-resource-base": "http://lblod.data.gift/concepts/"
+    },
+    "decisions": {
+      "class": "http://data.vlaanderen.be/ns/besluit#Besluit",
+      "attributes": {
+        "publication-date": {
+          "type": "date",
+          "predicate": "http://data.europa.eu/eli/ontology#date_publication"
+        },
+        "document-links": {
+          "type": "uri-set",
+          "predicate": "foaf:page"
+        }
+      },
+      "relationships": {
+        "has-decision-activity": {
+          "predicate": "http://www.w3.org/ns/prov#generated",
+          "target": "decision-activities",
+          "cardinality": "one",
+          "inverse": true
+        }
+      },
+      "new-resource-base": "http://lblod.data.info/id/besluiten/"
+    },
+    "decision-activities": {
+      "class": "https://data.vlaanderen.be/ns/besluitvorming#Beslissingsactiviteit",
+      "attributes": {
+        "end-date": {
+          "type": "date",
+          "predicate": "https://data.vlaanderen.be/ns/dossier#Activiteit.einddatum"
+        }
+      },
+      "relationships": {
+        "gives-cause-to": {
+          "predicate": "http://www.w3.org/ns/prov#generated",
+          "target": "decisions",
+          "cardinality": "many"
+        }
+      },
+      "new-resource-base": "http://lblod.data.info/id/beslissingsactiviteit/"
+    }
+  }
+}

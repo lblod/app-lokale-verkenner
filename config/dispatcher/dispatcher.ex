@@ -239,6 +239,10 @@ defmodule Dispatcher do
     Proxy.forward(conn, path, "http://resource/membership-roles/")
   end
 
+  match "/periods-of-time/*path", %{accept: [:json], layer: :api} do
+    Proxy.forward(conn, path, "http://resource/periods-of-time/")
+  end
+
   match "/vendors/*path", %{accept: [:json], layer: :api} do
     Proxy.forward(conn, path, "http://resource/vendors/")
   end
@@ -287,6 +291,16 @@ defmodule Dispatcher do
 
   match "/remote-data-objects/*path", %{accept: [:json], layer: :api} do
     Proxy.forward(conn, path, "http://resource/remote-data-objects/")
+  end
+
+  ###############
+  # CHANGE REQUESTS
+  ###############
+
+  # Every edit of organisation data; the resource routes above are read-only
+  # (see config/authorization/config.lisp).
+  match "/change-requests/*path", %{accept: [:json], layer: :api} do
+    Proxy.forward(conn, path, "http://change-requests/change-requests/")
   end
 
   ###############
