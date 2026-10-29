@@ -1,0 +1,132 @@
+# The import gate. import.sh runs this against RVS_GRAPH after the insert, and
+# against the staging graph for --dry-run.
+# Every row is a result; the run fails when any row has a non-zero count.
+#
+# (a) every subject the dump brought is present in the graph — the one
+#     anti-join that matters when the import only inserts. The reverse is not
+#     a failure: the graph may already hold RVS's own data, and nothing here
+#     deletes it.
+# (b) no worship type or worship subject reached the graph. Persons, accounts
+#     and mandates are in scope; only worship is refused.
+# (c) every unit and governing body has the org:Organization type (RVS-25).
+# (d) every governing body bestuurts a unit or a registered organisation (OP
+#     models the newer types, bosgroepen for example, as
+#     regorg:RegisteredOrganization), or is a time specialisation of a body
+#     that does.
+# (e) the graph holds the manifest's per-class counts — compared by
+#     verify-import.py, one count query per class (a VALUES + COUNT join
+#     answered wrongly once on this store).
+#
+# Every negative check is MINUS, never FILTER NOT EXISTS: this Virtuoso
+# answers the latter wrongly.
+
+# --- (b) worship ----------------------------------------------------------------
+SELECT ?check (COUNT(*) AS ?count) WHERE {
+  {
+    VALUES ?check { "worship-type" }
+    GRAPH <@GRAPH@> {
+      ?s rdf:type ?type .
+    }
+    FILTER(STRSTARTS(STR(?type), STR(ere:)))
+  }
+  UNION
+  {
+    VALUES ?check { "worship-subject" }
+    GRAPH <@GRAPH@> {
+      ?s ?p ?o .
+    }
+    FILTER(STRSTARTS(STR(?s), STR(ere:)))
+  }
+}
+GROUP BY ?check
+ORDER BY ?check
+;
+
+# --- (c) org:Organization (RVS-25) --------------------------------------------
+SELECT ?check (COUNT(*) AS ?count) WHERE {
+  {
+    VALUES ?check { "unit-without-org-type" }
+    GRAPH <@GRAPH@> {
+      ?s rdf:type besluit:Bestuurseenheid .
+    }
+    MINUS {
+      GRAPH <@GRAPH@> {
+        ?s rdf:type org:Organization .
+      }
+    }
+  }
+  UNION
+  {
+    VALUES ?check { "body-without-org-type" }
+    GRAPH <@GRAPH@> {
+      ?s rdf:type besluit:Bestuursorgaan .
+    }
+    MINUS {
+      GRAPH <@GRAPH@> {
+        ?s rdf:type org:Organization .
+      }
+    }
+  }
+}
+GROUP BY ?check
+ORDER BY ?check
+;
+
+# --- (d) governing-body closure -------------------------------------------------
+SELECT ?check (COUNT(*) AS ?count) WHERE {
+  VALUES ?check { "governing-body-without-unit" }
+  GRAPH <@GRAPH@> {
+    ?body rdf:type besluit:Bestuursorgaan .
+  }
+  MINUS {
+    GRAPH <@GRAPH@> {
+      ?body besluit:bestuurt ?unit .
+      ?unit rdf:type ?unitType .
+    }
+    VALUES ?unitType { besluit:Bestuurseenheid regorg:RegisteredOrganization }
+  }
+  MINUS {
+    GRAPH <@GRAPH@> {
+      ?body generiek:isTijdspecialisatieVan ?parent .
+      ?parent rdf:type besluit:Bestuursorgaan .
+    }
+  }
+}
+;
+
+# --- (a) subject sets: every dump subject is in the graph --------------------
+# Counts triples per subject on both sides and reports the subjects whose
+# counts differ. A subject that lost one triple (a uuid, a label) still keeps
+# its type, so a check on the type alone misses it. The dump also holds
+# subjects without an imported type (a codelist entry typed only ext:*, for
+# example), which the import still writes; those are compared too.
+#
+# The graph may hold extra triples on those subjects (RVS's own data), so only
+# a lower count on the graph side is a failure. A subject missing altogether
+# has no OPTIONAL match and fails too. COUNT(DISTINCT ?s, ?p, ?o) is not usable
+# on this store; COUNT over a SELECT DISTINCT ?s ?p ?o sub-select is.
+SELECT ?check (COUNT(*) AS ?count) WHERE {
+  {
+    VALUES ?check { "subject-triples-missing" }
+    {
+      SELECT ?s (COUNT(*) AS ?stagedCount) WHERE {
+        GRAPH <@STAGING@> {
+          { SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o } }
+        }
+      }
+      GROUP BY ?s
+    }
+    OPTIONAL {
+      SELECT ?s (COUNT(*) AS ?graphCount) WHERE {
+        GRAPH <@RVS_GRAPH@> {
+          { SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o } }
+        }
+      }
+      GROUP BY ?s
+    }
+    FILTER(!BOUND(?graphCount) || ?graphCount < ?stagedCount)
+  }
+}
+GROUP BY ?check
+ORDER BY ?check
+;

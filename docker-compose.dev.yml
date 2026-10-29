@@ -38,3 +38,12 @@ services:
 
   elasticsearch:
     restart: "no"
+
+  # The seed migrations for units and classification codes, next to the shared
+  # set (mu-migrations reads subfolders), as app-organization-portal mounts its
+  # config/dev-migrations. A local stack that imports an OP dump instead must not
+  # run them: comment this mount out before the first start (see
+  # config/project-scripts/import-from-op/README.md, "Conflicting migrations").
+  migrations:
+    volumes:
+      - ./config/dev-migrations:/data/migrations/dev/

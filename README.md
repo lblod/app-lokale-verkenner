@@ -79,3 +79,43 @@ to the stack. The organisations overview needs the search index: build it with
 
 Deploying a version: the deploy notes in [CHANGELOG.md](CHANGELOG.md) list, per change, the
 services to restart and the migrations to wait for.
+
+## Sync data from OP
+
+RVS is filled from OP's non-worship organisation data. Two `mu` commands and one manual
+file move:
+
+```sh
+# in OP's project: start the store, then write data/dumps/<stamp>/
+docker compose up -d triplestore project-scripts
+mu script project-scripts export-to-rvs
+
+# move data/dumps/<stamp>/ to this project's data/dumps/ (manual: separate compose networks)
+mkdir -p data/dumps && cp -r <OP>/data/dumps/<stamp> data/dumps/
+
+# in this project
+docker compose up -d triplestore project-scripts
+mu script project-scripts import-from-op --dump data/dumps/<stamp>
+```
+
+Prerequisites:
+
+- the triplestore and the `project-scripts` container are running
+  (`docker compose up -d triplestore project-scripts`);
+- the dump folder lives inside this project, at `data/dumps/<stamp>/` — `--dump` takes that
+  folder (it holds `op-rvs.nt` and `manifest.json`), and only this project is mounted in the
+  script container, so a path into OP's checkout does not work;
+- the seed migrations for units and classification codes live in `config/dev-migrations/`,
+  which `docker-compose.dev.yml` mounts next to the shared set for local development;
+  a local stack that imports a dump runs without that mount (see
+  `config/project-scripts/import-from-op/README.md`, "Conflicting migrations");
+- a read rule for `graphs/administrative-unit` exists in `config/authorization/`. Without
+  it the import succeeds but the UI shows nothing.
+
+A fresh dev database gets the seeded units and their mock-login accounts from
+`config/dev-migrations/`; a developer who imports a dump instead comments that mount out
+before the first start, and the accounts come from the migration that keys on the import
+graph.
+
+The import is additive and one-shot. Full procedure, flags, dry-run limits and the moved
+migrations: `config/project-scripts/import-from-op/README.md`.
