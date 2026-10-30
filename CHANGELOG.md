@@ -10,7 +10,7 @@
 - Migrations: status labels of the validation flow, earlier requests set to afgehandeld, a second ABB mock account [RVS-37]
 - Add the import-from-op mu-script; the seed migrations move to config/dev-migrations [RVS-40]
 - Add mock-login accounts for the organisations an OP import brings in [RVS-40]
-- Add the frontend, lblod/frontend-lokale-verkenner 0.0.1, to the stack
+- Add the frontend, lblod/frontend-lokale-verkenner 0.0.2, to the stack
 
 ### Deploy notes
 ```
