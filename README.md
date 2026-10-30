@@ -71,8 +71,10 @@ which `docker-compose.dev.yml` mounts into the template image:
 
     docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
-The identifier listens on http://localhost:88 and Virtuoso on http://localhost:8899. Log in through
-mock-login (frontend-lokale-verkenner, or `POST /mock/sessions`), then post change requests. The service's
+The identifier listens on http://localhost:88, where the stack's frontend (lblod/frontend-lokale-verkenner)
+answers, and Virtuoso on http://localhost:8899. Log in through mock-login (the frontend, or
+`POST /mock/sessions`), then post change requests. For work on the frontend itself, run `ember serve`
+from a checkout of frontend-lokale-verkenner against this stack instead. The service's
 `scripts/e2e-mock-login.sh` runs the whole flow against this setup; run it while nobody else writes
 to the stack. The organisations overview needs the search index: build it with
 `scripts/reset-elastic.sh` once the migrations ran (see Search).

@@ -10,10 +10,11 @@
 - Migrations: status labels of the validation flow, earlier requests set to afgehandeld, a second ABB mock account [RVS-37]
 - Add the import-from-op mu-script; the seed migrations move to config/dev-migrations [RVS-40]
 - Add mock-login accounts for the organisations an OP import brings in [RVS-40]
+- Add the frontend, lblod/frontend-lokale-verkenner 0.0.1, to the stack
 
 ### Deploy notes
 ```
-drc up -d change-requests scope-of-operation kbo-data-sync project-scripts
+drc up -d frontend change-requests scope-of-operation kbo-data-sync project-scripts
 drc restart database                                      # config.lisp: the organisation graph and the logged-in group
 drc restart resource dispatcher delta-notifier            # resources model, routes, delta rule of the search index
 drc restart migrations                                    # wait for "All migrations executed"

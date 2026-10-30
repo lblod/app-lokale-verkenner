@@ -6,6 +6,9 @@ services:
     ports:
       - "8899:8890"
 
+  frontend:
+    restart: "no"
+
   mocklogin:
     image: lblod/mock-login-service:0.7.0
     environment:
