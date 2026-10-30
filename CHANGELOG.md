@@ -1,26 +1,22 @@
 # Changelog
-
 ## Unreleased
-
-- `scope-of-operation` (lblod/scope-of-operation-service 0.2.0) in the stack, as in OP: the werkingsgebied of an organisation in the creation and change-event forms; the dispatcher already routed `/scope-of-operation`. It writes composed locations with mu-auth-sudo and is reachable without login: the exception is documented in `config/authorization/config.lisp`.
-- `search` (semtech/mu-search 0.12.1) and `elasticsearch` (semtech/mu-search-elastic-backend 1.3.1, Elasticsearch 9) in the stack: the organisations overview and the organisation filters search `/search/organizations`, which the dispatcher already routed. One index, the organisations as a logged-in session reads them (`config/search/config.json`, OP's organisation index without the worship types; no people index), kept up to date by the delta-notifier (`config/delta/rules.js`); `scripts/reset-elastic.sh` rebuilds it.
-- `kbo-data-sync` (lblod/sync-wegwijs-organization-service 2.0.5) in the stack, as in OP: the KBO data of an organisation from Wegwijs after a save with a KBO number (the frontend posts `/kbo-data-sync/<structured identifier>`, which the dispatcher already routed) and nightly. It writes the organisation graph with mu-auth-sudo: the exception is documented in `config/authorization/config.lisp`.
-- Resources model in step with OP's development branch: `decisions.document-links` (uri-set, OP-3925) instead of `document-link`, `change-event-results.resulting-name` (OP-3927), the period resource named `periods-of-time` (OP-3947) with its dispatcher route, its start and end as dates (`xsd:date`), as in OP.
-- [RVS-9][RVS-10] Requests to register a new organisation or a veranderingsgebeurtenis wait for ABB (statuses "Informatie gevraagd" and "Afgehandeld", actions informatievraag, informatieantwoord, betwisting and afhandeling); edits of own data apply at once; the change-request service may write change events, their results and decisions.
-- [RVS-37] Change-request configuration: per aggregate the fields it may change (`writable`: the kerngegevens no longer change the werkingsgebied, the juridische vorm or the bijkomende kwalificaties, a vestiging only the sites), what the service registers (`registration`: the classifications by resource type, the oprichting, the classifications without a KBO number), the oprichting carries its result (`new-organisation` operates on `change-event-results`), the OCMW may request a ziekenhuisvereniging ("Wie beheert").
-- Migrations: the status labels as the screens show them and the goedkeuring as a decision, the requests applied before the validation flow are "Afgehandeld", a second ABB mock account.
-- [RVS-37] The organisation data leaves the public graph, which everyone reads, also without a login, for `http://mu.semte.ch/graphs/administrative-unit`, the graph OP keeps it in, which the new `logged-in` group reads. The public graph keeps the code lists, the locations, the mock-login accounts and, of the organisation of a mock account, its type and uuid (the mock-login page needs them before anyone is logged in). The change-request service writes the new graph (`APPLICATION_GRAPH`); the migration `20261021160000-organisation-data-out-of-the-public-graph` moves what the public graph held.
+- Set up mock-login [RVS-39]
+- Add change-request-service 0.2.0: every edit of organisation data is a change request [RVS-28]
+- New organisations and change events wait for validation by ABB; edits apply at once [RVS-9] [RVS-10]
+- Configure per aggregate the fields it may change and the classifications it registers [RVS-37]
+- Add scope-of-operation, kbo-data-sync and mu-search with Elasticsearch, as in OP [RVS-37]
+- Move the organisation data from the public graph to graphs/administrative-unit, readable only when logged in [RVS-37]
+- Sync the resources model with OP: document-links, resulting-name, periods-of-time with dates [OP-3925] [OP-3927] [OP-3947]
+- Migrations: status labels of the validation flow, earlier requests set to afgehandeld, a second ABB mock account [RVS-37]
+- Add the import-from-op mu-script; the seed migrations move to config/dev-migrations [RVS-40]
+- Add mock-login accounts for the organisations an OP import brings in [RVS-40]
 
 ### Deploy notes
-
-The first deploy of the change requests. In this order:
-
-1. Publish `lblod/change-request-service:0.2.0`, the first release with the validation flow, from the service's master once its PR #2 is merged; `docker-compose.yml` pins it.
-2. `mkdir -p data/elasticsearch && chown 1000 data/elasticsearch`: Elasticsearch 9 runs as uid 1000 and dies on a directory that `docker compose up` created as root.
-3. `docker compose pull change-requests scope-of-operation kbo-data-sync search elasticsearch`, then `docker compose up -d change-requests scope-of-operation kbo-data-sync search elasticsearch` (five new services).
-4. `docker compose restart database`: `config/authorization/config.lisp` (the organisation graph and the `logged-in` group that reads it, the graph the service writes, by type, and the change-requests graph).
-5. `docker compose restart resource dispatcher delta-notifier`: the resources model (`change-events.json`, read by `domain.lisp`; `auth.json` roles; `document-links`, `resulting-name`, `periods-of-time`), the routes `/change-requests` and `/periods-of-time`, and the delta rule that keeps the search index up to date.
-6. `docker compose restart migrations` and wait until `docker compose logs migrations` shows these executed: `20261015120000-add-change-request-code-lists`, `20261020120000-add-validation-flow-code-lists`, `20261020120001-goedgekeurd-is-the-decision`, `20261021120000-validation-flow-labels`, `20261021120001-requests-applied-before-the-validation-flow`, `20261021120002-add-second-abb-mock-account`, `20261021160000-organisation-data-out-of-the-public-graph`.
-7. `docker compose restart change-requests`: it reads `config/change-requests/change-requests.json` and the resources model at start-up, and checks them; `docker compose logs change-requests` names the aggregates it loaded, or why it did not start.
-8. `/bin/bash scripts/reset-elastic.sh`: the search index, built after the migrations (which write Virtuoso directly, so mu-search does not see them); `docker compose logs -f search` shows the index being built.
-9. Check: `GET /change-requests/permissions` without a session answers 401; logged in, `GET /change-requests` answers 200 and `GET /search/organizations/search?page[size]=1` lists an organisation (`count` is the number of organisations).
+```
+drc up -d change-requests scope-of-operation kbo-data-sync project-scripts
+drc restart database                                      # config.lisp: the organisation graph and the logged-in group
+drc restart resource dispatcher delta-notifier            # resources model, routes, delta rule of the search index
+drc restart migrations                                    # wait for "All migrations executed"
+/bin/bash scripts/reset-elastic.sh                        # last: creates data/elasticsearch, builds the index, ends with "up -d"
+```
+To fill an environment from OP: `config/project-scripts/import-from-op/README.md`.
