@@ -12,6 +12,18 @@ services:
       - "8888:8890"
     restart: "no"
 
+  delta-producer-publication-graph-maintainer:
+    restart: "no"
+
+  delta-producer-background-jobs-initiator:
+    restart: "no"
+
+  delta-producer-dump-file-publisher:
+    restart: "no"
+
+  jobs-controller:
+    restart: "no"
+
   frontend:
     restart: "no"
 

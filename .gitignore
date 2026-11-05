@@ -8,6 +8,9 @@
 /data/dumps/
 !/data/db/toLoad
 !/data/db/toLoad/*
+# The delta producer's publication triplestore and the files it shares with its consumers
+/data/publication-triplestore/
+/data/files/
 
 docker-compose.override.yml
 /data/elasticsearch/**

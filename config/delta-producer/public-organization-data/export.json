@@ -1,0 +1,194 @@
+{
+  "export": [
+    {
+      "type": "http://data.vlaanderen.be/ns/besluit#Bestuurseenheid",
+      "strictTypeExport": "true",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "http://www.w3.org/2004/02/skos/core#altLabel",
+        "http://www.w3.org/ns/regorg#legalName",
+        "http://www.w3.org/ns/org#purpose",
+        "https://data.lblod.info/vocabularies/generiek/geplandeEindDatum",
+        "http://lblod.data.gift/vocabularies/organisatie/inhoudelijkThema",
+        "http://lblod.data.gift/vocabularies/organisatie/bijkomendeKwalificatie",
+        "http://www.w3.org/ns/regorg#orgStatus",
+        "https://data.vlaanderen.be/ns/organisatie#rechtsvorm",
+        "http://data.vlaanderen.be/ns/besluit#werkingsgebied",
+        "http://www.w3.org/ns/org#classification",
+        "http://www.w3.org/ns/adms#identifier",
+        "http://www.w3.org/ns/org#hasPrimarySite",
+        "http://www.w3.org/ns/org#linkedTo"
+      ]
+    },
+    {
+      "type": "http://www.w3.org/ns/regorg#RegisteredOrganization",
+      "strictTypeExport": "true",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/2004/02/skos/core#prefLabel",
+        "http://www.w3.org/2004/02/skos/core#altLabel",
+        "http://www.w3.org/ns/regorg#legalName",
+        "http://www.w3.org/ns/org#purpose",
+        "https://data.lblod.info/vocabularies/generiek/geplandeEindDatum",
+        "http://lblod.data.gift/vocabularies/organisatie/inhoudelijkThema",
+        "http://lblod.data.gift/vocabularies/organisatie/bijkomendeKwalificatie",
+        "http://www.w3.org/ns/regorg#orgStatus",
+        "https://data.vlaanderen.be/ns/organisatie#rechtsvorm",
+        "http://purl.org/dc/terms/spatial",
+        "http://www.w3.org/ns/org#classification",
+        "http://www.w3.org/ns/adms#identifier",
+        "http://www.w3.org/ns/org#hasPrimarySite",
+        "http://www.w3.org/ns/org#linkedTo"
+      ]
+    },
+    {
+      "type": "http://data.vlaanderen.be/ns/besluit#Bestuursorgaan",
+      "strictTypeExport": "true",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://data.vlaanderen.be/ns/mandaat#bindingStart",
+        "http://data.vlaanderen.be/ns/mandaat#bindingEinde",
+        "http://data.vlaanderen.be/ns/besluit#bestuurt",
+        "http://www.w3.org/ns/org#classification",
+        "https://data.vlaanderen.be/ns/generiek#isTijdspecialisatieVan",
+        "http://www.w3.org/ns/org#hasPost"
+      ]
+    },
+    {
+      "type": "http://data.vlaanderen.be/ns/mandaat#Mandaat",
+      "strictTypeExport": "true",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/ns/org#role",
+        "http://data.vlaanderen.be/ns/mandaat#aantalHouders"
+      ]
+    },
+    {
+      "type": "http://www.w3.org/ns/org#Post",
+      "strictTypeExport": "true",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/ns/org#role",
+        "http://www.w3.org/ns/org#postIn"
+      ]
+    },
+    {
+      "type": "http://www.w3.org/ns/org#Membership",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/ns/org#member",
+        "http://www.w3.org/ns/org#organization",
+        "http://www.w3.org/ns/org#organisation",
+        "http://www.w3.org/ns/org#role",
+        "http://data.europa.eu/m8g/memberDuring"
+      ],
+      "additionalFilter": "FILTER NOT EXISTS { ?subject <http://www.w3.org/ns/org#member> ?personMember . ?personMember a <http://www.w3.org/ns/person#Person> }"
+    },
+    {
+      "type": "http://www.w3.org/ns/org#ChangeEvent",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://purl.org/dc/terms/date",
+        "http://purl.org/dc/terms/description",
+        "http://data.lblod.info/vocabularies/contacthub/typeWijziging",
+        "http://www.w3.org/ns/org#resultingOrganization",
+        "http://www.w3.org/ns/org#originalOrganization",
+        "http://lblod.data.gift/vocabularies/organisatie/veranderingsgebeurtenisResultaat",
+        "http://data.europa.eu/m8g/hasFormalFramework"
+      ]
+    },
+    {
+      "type": "http://lblod.data.gift/vocabularies/organisatie/VeranderingsgebeurtenisResultaat",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://lblod.data.gift/vocabularies/organisatie/resulterendeNaam",
+        "http://lblod.data.gift/vocabularies/organisatie/resulterendeStatus",
+        "http://lblod.data.gift/vocabularies/organisatie/resulterendeRechtsvorm",
+        "http://lblod.data.gift/vocabularies/organisatie/resulterendWerkingsgebied",
+        "http://lblod.data.gift/vocabularies/organisatie/resulterendeBijkomendeKwalificatie",
+        "http://mu.semte.ch/vocabularies/ext/resultingOrganization"
+      ]
+    },
+    {
+      "type": "http://data.vlaanderen.be/ns/besluit#Besluit",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://data.europa.eu/eli/ontology#date_publication",
+        "http://www.w3.org/ns/prov#generated"
+      ]
+    },
+    {
+      "type": "http://www.w3.org/ns/adms#Identifier",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/2004/02/skos/core#notation",
+        "https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator"
+      ]
+    },
+    {
+      "type": "https://data.vlaanderen.be/ns/generiek#GestructureerdeIdentificator",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "https://data.vlaanderen.be/ns/generiek#lokaleIdentificator"
+      ]
+    },
+    {
+      "type": "http://www.w3.org/2006/time#ProperInterval",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/2006/time#hasBeginning",
+        "http://www.w3.org/2006/time#hasEnd"
+      ]
+    },
+    {
+      "type": "http://www.w3.org/ns/prov#Location",
+      "graphsFilter": [
+        "http://mu.semte.ch/graphs/administrative-unit"
+      ],
+      "properties": [
+        "http://mu.semte.ch/vocabularies/core/uuid",
+        "http://www.w3.org/2000/01/rdf-schema#label",
+        "http://www.opengis.net/ont/geosparql#sfWithin",
+        "http://mu.semte.ch/vocabularies/ext/werkingsgebiedNiveau",
+        "http://www.w3.org/2004/02/skos/core#exactMatch"
+      ]
+    }
+  ]
+}

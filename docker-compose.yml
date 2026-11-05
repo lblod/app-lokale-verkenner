@@ -179,3 +179,86 @@ services:
     labels:
       - "logging=true"
     logging: *default-logging
+
+  ################################################################################
+  # DELTA PRODUCER
+  ################################################################################
+
+  publication-triplestore:
+    # The triplestore the producer publishes into, as in OP: it holds the
+    # publication graph and the delta files' metadata, never the source data.
+    image: redpencil/virtuoso:1.4.0
+    environment:
+      SPARQL_UPDATE: "true"
+      DEFAULT_GRAPH: "http://mu.semte.ch/application"
+    volumes:
+      - ./data/publication-triplestore:/data
+      - ./config/publication-triplestore/virtuoso.ini:/data/virtuoso.ini
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  jobs-controller:
+    # Runs the tasks of a job in the order config/jobs-controller/config.json gives for its
+    # operation. It has no dispatcher route: the delta-notifier feeds it the job's status changes.
+    image: lblod/job-controller-service:0.7.0
+    links:
+      - database:database
+    volumes:
+      - ./config/jobs-controller/:/config/
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  delta-producer-publication-graph-maintainer:
+    # Keeps the publication graph in step with the changes on the graphs the export reads, and
+    # writes a delta file for each change. It serves those files: the dispatcher routes
+    # /sync/public-organization-data/files to it.
+    image: lblod/delta-producer-publication-graph-maintainer:1.4.3
+    environment:
+      MAX_BODY_SIZE: "50mb"
+      PRETTY_PRINT_DIFF_JSON: "true"
+      PUBLICATION_VIRTUOSO_ENDPOINT: "http://publication-triplestore:8890/sparql"
+      PUBLICATION_MU_AUTH_ENDPOINT: "http://publication-triplestore:8890/sparql"
+      SUDO_QUERY_RETRY_FOR_HTTP_STATUS_CODES: "404,500,503"
+      CONFIG_SERVICES_JSON_PATH: "/config/publication-graph-maintainer/config.json"
+    volumes:
+      - ./config/delta-producer:/config
+      - ./data/files/:/share
+    links:
+      - database:database
+      - triplestore:virtuoso
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  delta-producer-background-jobs-initiator:
+    # Starts the producer's healing, dump-creation and initial-sync jobs (config/delta-producer/
+    # background-jobs-initiator/config.json) on their cron patterns.
+    image: lblod/delta-producer-background-jobs-initiator:1.0.1
+    environment:
+      JOB_TIMEOUT_MINUTES: 1380 # 23h
+    volumes:
+      - ./config/delta-producer/background-jobs-initiator:/config
+    links:
+      - database:database
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  delta-producer-dump-file-publisher:
+    # Writes the dump file of a dump-creation or initial-sync job to ./data/files.
+    image: lblod/delta-producer-dump-file-publisher:0.10.3
+    volumes:
+      - ./config/delta-producer/dump-file-publisher:/config
+      - ./data/files:/share
+    links:
+      - database:database
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
