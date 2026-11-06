@@ -97,11 +97,9 @@
         "http://mu.semte.ch/vocabularies/core/uuid",
         "http://www.w3.org/ns/org#member",
         "http://www.w3.org/ns/org#organization",
-        "http://www.w3.org/ns/org#organisation",
         "http://www.w3.org/ns/org#role",
         "http://data.europa.eu/m8g/memberDuring"
-      ],
-      "additionalFilter": "FILTER NOT EXISTS { ?subject <http://www.w3.org/ns/org#member> ?personMember . ?personMember a <http://www.w3.org/ns/person#Person> }"
+      ]
     },
     {
       "type": "http://www.w3.org/ns/org#ChangeEvent",
