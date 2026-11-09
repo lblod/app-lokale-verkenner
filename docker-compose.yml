@@ -67,6 +67,19 @@ services:
       - "logging=true"
     logging: *default-logging
 
+  file:
+    # Hosts the dump files the delta producer publishes and serves them at
+    # /files/:id/download, which is where the consumer downloads a dump from.
+    image: semtech/mu-file-service:3.4.0
+    volumes:
+      - ./data/files:/share
+    links:
+      - database:database
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
   triplestore:
     image: redpencil/virtuoso:1.4.0
     environment:

@@ -4,8 +4,8 @@
     "targetGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data",
     "fileBaseName": "dump-public-organization-data",
     "publicationGraphEndpoint": "http://publication-triplestore:8890/sparql",
-    "targetDcatGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data-deltas",
-    "targetFilesGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data-deltas",
+    "targetDcatGraph": "http://mu.semte.ch/graphs/public",
+    "targetFilesGraph": "http://mu.semte.ch/graphs/public",
     "cleanupOldDumps": true
   },
   "http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/initialPublicationGraphSyncing/public-organization-data": {
@@ -13,8 +13,8 @@
     "targetGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data",
     "fileBaseName": "dump-public-organization-data",
     "publicationGraphEndpoint": "http://publication-triplestore:8890/sparql",
-    "targetDcatGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data-deltas",
-    "targetFilesGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data-deltas",
+    "targetDcatGraph": "http://mu.semte.ch/graphs/public",
+    "targetFilesGraph": "http://mu.semte.ch/graphs/public",
     "cleanupOldDumps": true
   }
 }
