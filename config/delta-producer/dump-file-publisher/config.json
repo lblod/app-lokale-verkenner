@@ -1,6 +1,6 @@
 {
   "http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/deltaDumpFileCreation/public-organization-data": {
-    "dcatDataSetSubject": "http://data.lblod.info/datasets/delta-producer/dumps/RvsOrganisationDataCacheGraphDump",
+    "dcatDataSetSubject": "http://data.lblod.info/datasets/delta-producer/dumps/PublicOrganizationDataCacheGraphDump",
     "targetGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data",
     "fileBaseName": "dump-public-organization-data",
     "publicationGraphEndpoint": "http://publication-triplestore:8890/sparql",
@@ -9,7 +9,7 @@
     "cleanupOldDumps": true
   },
   "http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/initialPublicationGraphSyncing/public-organization-data": {
-    "dcatDataSetSubject": "http://data.lblod.info/datasets/delta-producer/dumps/RvsOrganisationDataCacheGraphDump",
+    "dcatDataSetSubject": "http://data.lblod.info/datasets/delta-producer/dumps/PublicOrganizationDataCacheGraphDump",
     "targetGraph": "http://redpencil.data.gift/id/deltas/producer/public-organization-data",
     "fileBaseName": "dump-public-organization-data",
     "publicationGraphEndpoint": "http://publication-triplestore:8890/sparql",
