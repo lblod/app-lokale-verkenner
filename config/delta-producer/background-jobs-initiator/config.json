@@ -9,6 +9,6 @@
     "cronPatternHealingJob": "0 0 2 * * *",
     "startInitialSync": false,
     "errorCreatorUri": "http://lblod.data.gift/services/delta-producer-background-jobs-initiator-public-organization-data",
-    "disableDumpFileCreation": true
+    "disableDumpFileCreation": false
   }
 ]
