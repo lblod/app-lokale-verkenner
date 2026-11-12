@@ -1,5 +1,6 @@
 # Changelog
 ## Unreleased
+- Add the public-organization-data delta producer: publishes non-worship units, registered organisations, memberships, bestuursorganen, mandates, decisions, identifiers, werkingsgebieden, sites, addresses and contact points for OP to consume [RVS-29] [RVS-30]
 - Set up mock-login [RVS-39]
 - Add change-request-service 0.2.0: every edit of organisation data is a change request [RVS-28]
 - New organisations and change events wait for validation by ABB; edits apply at once [RVS-9] [RVS-10]
@@ -15,9 +16,16 @@
 ### Deploy notes
 ```
 drc up -d frontend change-requests scope-of-operation kbo-data-sync project-scripts
+drc up -d delta-producer-publication-graph-maintainer delta-producer-background-jobs-initiator delta-producer-dump-file-publisher
 drc restart database                                      # config.lisp: the organisation graph and the logged-in group
 drc restart resource dispatcher delta-notifier            # resources model, routes, delta rule of the search index
 drc restart migrations                                    # wait for "All migrations executed"
 /bin/bash scripts/reset-elastic.sh                        # last: creates data/elasticsearch, builds the index, ends with "up -d"
 ```
 To fill an environment from OP: `config/project-scripts/import-from-op/README.md`.
+
+To publish organisations for OP's consumers, in order, waiting after each job:
+```
+drc exec delta-producer-background-jobs-initiator curl -X POST http://localhost/public-organization-data/initial-sync-jobs
+drc exec delta-producer-background-jobs-initiator curl -X POST http://localhost/public-organization-data/dump-publication-graph-jobs
+```
