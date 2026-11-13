@@ -1,0 +1,14 @@
+[
+  {
+    "name": "public-organization-data",
+    "jobsGraph": "http://mu.semte.ch/graphs/jobs",
+    "dumpFileCreationJobOperation": "http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/deltaDumpFileCreation/public-organization-data",
+    "initialPublicationGraphSyncJobOperation": "http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/initialPublicationGraphSyncing/public-organization-data",
+    "healingJobOperation": "http://redpencil.data.gift/id/jobs/concept/JobOperation/deltas/healingOperation/public-organization-data",
+    "cronPatternDumpJob": "0 0 1 * * 6",
+    "cronPatternHealingJob": "0 0 2 * * *",
+    "startInitialSync": false,
+    "errorCreatorUri": "http://lblod.data.gift/services/delta-producer-background-jobs-initiator-public-organization-data",
+    "disableDumpFileCreation": false
+  }
+]
