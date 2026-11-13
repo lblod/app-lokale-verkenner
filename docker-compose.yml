@@ -168,9 +168,6 @@ services:
   change-requests:
     # Every edit of organisation data goes through this service (POST /change-requests); see
     # the "Change requests" section of the README and config/authorization/config.lisp.
-    # 0.2.0 is the first release with the validation flow; it is published from the service's
-    # master once its PR #2 is merged (see the deploy notes in CHANGELOG.md). Until then run the
-    # stack with docker-compose.dev.yml, which mounts a checkout of ../change-request-service.
     image: lblod/change-request-service:0.2.0
     environment:
       DEFAULT_MU_AUTH_SCOPE: "http://services.lblod.info/change-request-service"
@@ -229,7 +226,7 @@ services:
     # Keeps the publication graph in step with the changes on the graphs the export reads, and
     # writes a delta file for each change. It serves those files: the dispatcher routes
     # /sync/public-organization-data/files to it.
-    image: lblod/delta-producer-publication-graph-maintainer:1.4.3
+    image: lblod/delta-producer-publication-graph-maintainer:1.4.4
     environment:
       MAX_BODY_SIZE: "50mb"
       PRETTY_PRINT_DIFF_JSON: "true"
