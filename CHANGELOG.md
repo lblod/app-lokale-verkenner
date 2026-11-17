@@ -11,6 +11,7 @@
 - Add the import-from-op mu-script; the seed migrations move to config/dev-migrations [RVS-40]
 - Add mock-login accounts for the organisations an OP import brings in [RVS-40]
 - Add the frontend, lblod/frontend-lokale-verkenner 0.0.2, to the stack
+- Add an inactive flag to the municipality locations that ceased to exist through mergers, as in OP [OP-3973]
 
 ### Deploy notes
 ```
