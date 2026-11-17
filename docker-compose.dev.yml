@@ -9,6 +9,9 @@ services:
   frontend:
     restart: "no"
 
+  adressenregister:
+    restart: "no"
+
   mocklogin:
     image: lblod/mock-login-service:0.7.0
     environment:
