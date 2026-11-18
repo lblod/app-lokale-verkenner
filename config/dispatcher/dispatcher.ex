@@ -456,6 +456,14 @@ defmodule Dispatcher do
   end
 
   #################################################################
+  #  DELTA: public-organization-data
+  #################################################################
+
+  get "/sync/public-organization-data/files/*path" do
+    Proxy.forward conn, path, "http://delta-producer-publication-graph-maintainer/public-organization-data/files/"
+  end
+
+  #################################################################
   #  DELTA: organizations
   #################################################################
 

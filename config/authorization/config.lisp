@@ -49,7 +49,9 @@
   :oslc "http://open-services.net/ns/core#"
   :code "http://lblod.data.gift/vocabularies/organisatie/"
   :besluitvorming "https://data.vlaanderen.be/ns/besluitvorming#"
-  :cr "http://lblod.data.gift/vocabularies/change-requests/")
+  :cr "http://lblod.data.gift/vocabularies/change-requests/"
+  :cogs "http://vocab.deri.ie/cogs#"
+  :task "http://redpencil.data.gift/vocabularies/tasks/")
 
 
 ;;;;;;;;;
@@ -119,6 +121,14 @@
 (define-graph sessions ("http://mu.semte.ch/graphs/sessions")
   ("session:Session" -> _))
 
+;; The jobs of the delta producer (delta-producer-background-jobs-initiator,
+;; job-controller-service, publication-graph-maintainer): jobs and the errors of their tasks,
+;; as OP keeps them in its jobs graph. The services write it with mu-auth-sudo, as in OP.
+(define-graph jobs ("http://mu.semte.ch/graphs/jobs")
+  ("cogs:Job" -> _)
+  ("task:Task" -> _)
+  ("oslc:Error" -> _))
+
 
 ;;;;;;;;;;;;;
 ;; User roles
@@ -164,6 +174,12 @@
 
 (grant (read)
        :to-graph organisations
+       :for-allowed-group "logged-in")
+
+;; The job statuses the dashboard reads (dispatcher: /jobs), as OP grants its jobs graph to
+;; its admin role. Nobody gets a write grant: the jobs are written by the services.
+(grant (read)
+       :to-graph jobs
        :for-allowed-group "logged-in")
 
 ;; The exception: the change-request service. The scope header can only come from a service in

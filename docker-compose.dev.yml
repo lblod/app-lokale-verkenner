@@ -5,6 +5,24 @@ services:
   triplestore:
     ports:
       - "8899:8890"
+    restart: "no"
+
+  publication-triplestore:
+    ports:
+      - "8888:8890"
+    restart: "no"
+
+  delta-producer-publication-graph-maintainer:
+    restart: "no"
+
+  delta-producer-background-jobs-initiator:
+    restart: "no"
+
+  delta-producer-dump-file-publisher:
+    restart: "no"
+
+  jobs-controller:
+    restart: "no"
 
   frontend:
     restart: "no"
@@ -24,13 +42,6 @@ services:
     restart: "no"
 
   change-requests:
-    image: semtech/mu-javascript-template:1.9.1
-    environment:
-      NODE_ENV: "development"
-      # the template image does not carry the ENV of the service's Dockerfile
-      MAX_BODY_SIZE: "5mb"
-    volumes:
-      - ../change-request-service:/app
     restart: "no"
 
   kbo-data-sync:

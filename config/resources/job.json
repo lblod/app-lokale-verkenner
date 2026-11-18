@@ -1,0 +1,39 @@
+{
+  "version": "0.1",
+  "prefixes": {
+    "adms": "http://www.w3.org/ns/adms#",
+    "cogs": "http://vocab.deri.ie/cogs#",
+    "dct": "http://purl.org/dc/terms/",
+    "task": "http://redpencil.data.gift/vocabularies/tasks/"
+  },
+  "resources": {
+    "jobs": {
+      "name": "job",
+      "class": "cogs:Job",
+      "attributes": {
+        "created": {
+          "type": "datetime",
+          "predicate": "dct:created"
+        },
+        "modified": {
+          "type": "datetime",
+          "predicate": "dct:modified"
+        },
+        "creator": {
+          "type": "url",
+          "predicate": "dct:creator"
+        },
+        "status": {
+          "type": "url",
+          "predicate": "adms:status"
+        },
+        "operation": {
+          "type": "url",
+          "predicate": "task:operation"
+        }
+      },
+      "features": ["include-uri"],
+      "new-resource-base": "http://redpencil.data.gift/id/job/"
+    }
+  }
+}
