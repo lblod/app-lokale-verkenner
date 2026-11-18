@@ -12,6 +12,7 @@ services:
       SESSION_COOKIE_SECURE: "on"
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   dispatcher:
@@ -20,6 +21,7 @@ services:
       - ./config/dispatcher:/config
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   frontend:
@@ -36,6 +38,7 @@ services:
       - ./config/resources:/config
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   migrations:
@@ -48,6 +51,7 @@ services:
       - ./config/migrations:/data/migrations
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   delta-notifier:
@@ -56,6 +60,7 @@ services:
       - ./config/delta:/config/
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   database:
@@ -65,6 +70,7 @@ services:
       - ./data/authorization/:/data/
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   triplestore:
@@ -76,6 +82,7 @@ services:
       - ./config/virtuoso/virtuoso.ini:/data/virtuoso.ini
     labels:
       - "logging=true"
+    restart: always
     logging: *default-logging
 
   login:
@@ -90,6 +97,10 @@ services:
       MU_APPLICATION_AUTH_CLIENT_SECRET: ""
       ORGANIZATION_TYPE: "http://www.w3.org/ns/org#Organization"
       GROUP_TYPE_LABEL: "organizations"
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
 
   accountdetail:
     image: lblod/account-detail-service:0.1.0
