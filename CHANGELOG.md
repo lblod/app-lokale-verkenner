@@ -13,10 +13,13 @@
 - Add the frontend, lblod/frontend-lokale-verkenner 0.0.2, to the stack
 - Add an inactive flag to the municipality locations that ceased to exist through mergers, as in OP [OP-3973]
 - Store the original values on the result of a change event, as in OP [OP-3950]
+- Contact data is editable (kerngegevens, vestigingen, a new organisation), as in OP: the frontend flag is on [RVS-28]
+- Add adressenregister 0.9.0, the address lookup of the frontend (OP runs 0.8.2) [RVS-28]
 
 ### Deploy notes
 ```
 drc up -d frontend change-requests scope-of-operation kbo-data-sync project-scripts
+drc up -d adressenregister                               # the address lookup of the editable contact card
 drc restart database                                      # config.lisp: the organisation graph and the logged-in group
 drc restart resource change-requests dispatcher delta-notifier   # resources model (change-requests reads it at start-up), routes, delta rule of the search index
 drc restart migrations                                    # wait for "All migrations executed"

@@ -66,9 +66,6 @@ of a step, are loaded into the public graph by the migrations
 
 ## Development
 
-With a checkout of change-request-service next to this repository (`../change-request-service`),
-which `docker-compose.dev.yml` mounts into the template image:
-
     docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 
 The identifier listens on http://localhost:88, where the stack's frontend (lblod/frontend-lokale-verkenner)
@@ -78,6 +75,26 @@ from a checkout of frontend-lokale-verkenner against this stack instead. The ser
 `scripts/e2e-mock-login.sh` runs the whole flow against this setup; run it while nobody else writes
 to the stack. The organisations overview needs the search index: build it with
 `scripts/reset-elastic.sh` once the migrations ran (see Search).
+
+The stack runs the published change-request-service image. To run a checkout of the service
+instead, next to this repository (`../change-request-service`), mount it into the template image
+with a `docker-compose.override.yml` (git ignores it):
+
+```yaml
+services:
+  change-requests:
+    image: semtech/mu-javascript-template:1.9.1
+    environment:
+      NODE_ENV: "development"
+      # the template image does not carry the ENV of the service's Dockerfile
+      MAX_BODY_SIZE: "5mb"
+    volumes:
+      - ../change-request-service:/app
+```
+
+and name it in the command, because a list of `-f` files leaves it out:
+
+    docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.override.yml up -d
 
 Deploying a version: the deploy notes in [CHANGELOG.md](CHANGELOG.md) list, per change, the
 services to restart and the migrations to wait for.

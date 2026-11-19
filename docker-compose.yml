@@ -24,6 +24,19 @@ services:
 
   frontend:
     image: lblod/frontend-lokale-verkenner:0.0.2
+    environment:
+      EMBER_ENABLE_EDIT_CONTACT_DATA_FEATURE: "true"
+    labels:
+      - "logging=true"
+    restart: always
+    logging: *default-logging
+
+  adressenregister:
+    # The address search of the contact data (kerngegevens, vestigingen, a new organisation), as
+    # in OP: the dispatcher routes /adresses-register here, and it looks addresses up in the public
+    # APIs of geo.api.vlaanderen.be and basisregisters.vlaanderen.be. OP runs 0.8.2; 0.9.0 has the
+    # same routes on a newer template.
+    image: lblod/adressenregister-fuzzy-search-service:0.9.0
     labels:
       - "logging=true"
     restart: always
@@ -155,9 +168,8 @@ services:
   change-requests:
     # Every edit of organisation data goes through this service (POST /change-requests); see
     # the "Change requests" section of the README and config/authorization/config.lisp.
-    # 0.2.0 is the first release with the validation flow; it is published from the service's
-    # master once its PR #2 is merged (see the deploy notes in CHANGELOG.md). Until then run the
-    # stack with docker-compose.dev.yml, which mounts a checkout of ../change-request-service.
+    # 0.2.0 is the first release with the validation flow. To run a checkout of the service
+    # instead, see "Development" in the README.
     image: lblod/change-request-service:0.2.0
     environment:
       DEFAULT_MU_AUTH_SCOPE: "http://services.lblod.info/change-request-service"
