@@ -32,6 +32,10 @@ services:
     logging: *default-logging
 
   adressenregister:
+    # The address search of the contact data (kerngegevens, vestigingen, a new organisation), as
+    # in OP: the dispatcher routes /adresses-register here, and it looks addresses up in the public
+    # APIs of geo.api.vlaanderen.be and basisregisters.vlaanderen.be. OP runs 0.8.2; 0.9.0 has the
+    # same routes on a newer template.
     image: lblod/adressenregister-fuzzy-search-service:0.9.0
     labels:
       - "logging=true"
