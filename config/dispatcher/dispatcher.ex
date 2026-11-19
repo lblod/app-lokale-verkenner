@@ -307,13 +307,13 @@ defmodule Dispatcher do
   # LOGIN
   ###############
 
-  match "/accounts/*path", %{accept: [:json], layer: :api} do
-    Proxy.forward(conn, path, "http://resource/accounts/")
-  end
-
   # match "/accounts/*path", %{accept: [:json], layer: :api} do
-  #   Proxy.forward(conn, path, "http://accountdetail/accounts/")
+  #   Proxy.forward(conn, path, "http://resource/accounts/")
   # end
+
+  match "/accounts/*path", %{accept: [:json], layer: :api} do
+    Proxy.forward(conn, path, "http://accountdetail/accounts/")
+  end
 
   match "/active-role/*path", %{accept: [:json], layer: :api} do
     Proxy.forward(conn, path, "http://roles/")
