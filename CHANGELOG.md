@@ -13,6 +13,9 @@
 - Add the frontend, lblod/frontend-lokale-verkenner 0.0.2, to the stack
 - Add an inactive flag to the municipality locations that ceased to exist through mergers, as in OP [OP-3973]
 - Store the original values on the result of a change event, as in OP [OP-3950]
+- Make related organisations and change events editable again as change requests: aggregates `related-organizations` and `change-event-edit` [RVS-28]
+- Let the change-request service write memberships and periods of time for related organisations [RVS-28]
+- Let the change-request service link another organisation from a membership, but never operate on it [RVS-28]
 
 ### Deploy notes
 ```
@@ -23,3 +26,5 @@ drc restart migrations                                    # wait for "All migrat
 /bin/bash scripts/reset-elastic.sh                        # last: creates data/elasticsearch, builds the index, ends with "up -d"
 ```
 To fill an environment from OP: `config/project-scripts/import-from-op/README.md`.
+
+For the edit pages of related organisations and change events: publish or mount the new `lblod/frontend-lokale-verkenner`, publish the new `lblod/change-request-service` and recreate `change-requests` and `resource` (the aggregates in `change-requests.json`) and reload authorization (`drc restart database`, the memberships and periods of time in `config.lisp`).

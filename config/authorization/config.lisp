@@ -39,6 +39,7 @@
   :ext "http://mu.semte.ch/vocabularies/ext/"
   ;; Custom prefix URIs here, prefix casing is ignored
   :org "http://www.w3.org/ns/org#"
+  :time "http://www.w3.org/2006/time#"
   :besluit "http://data.vlaanderen.be/ns/besluit#"
   :regorg "http://www.w3.org/ns/regorg#"
   :locn "http://www.w3.org/ns/locn#"
@@ -96,7 +97,10 @@
   ("org:ChangeEvent" -> _)
   ("code:VeranderingsgebeurtenisResultaat" -> _)
   ("besluit:Besluit" -> _)
-  ("besluitvorming:Beslissingsactiviteit" -> _))
+  ("besluitvorming:Beslissingsactiviteit" -> _)
+  ;; the memberships and periods the related-organizations aggregate creates and changes
+  ("org:Membership" -> _)
+  ("time:ProperInterval" -> _))
 
 ;; Change requests and their versions, the history of every edit. Only the change-request
 ;; service reads and writes it; it decides per request who may see it. Every class the service
