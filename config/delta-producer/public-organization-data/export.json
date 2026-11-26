@@ -76,7 +76,11 @@
         "http://lblod.data.gift/vocabularies/organisatie/resulterendeRechtsvorm",
         "http://lblod.data.gift/vocabularies/organisatie/resulterendWerkingsgebied",
         "http://lblod.data.gift/vocabularies/organisatie/resulterendeBijkomendeKwalificatie",
-        "http://mu.semte.ch/vocabularies/ext/resultingOrganization"
+        "http://mu.semte.ch/vocabularies/ext/resultingOrganization",
+        "http://lblod.data.gift/vocabularies/organisatie/origineleNaam",
+        "http://lblod.data.gift/vocabularies/organisatie/origineleRechtsvorm",
+        "http://lblod.data.gift/vocabularies/organisatie/origineelWerkingsgebied",
+        "http://lblod.data.gift/vocabularies/organisatie/origineleBijkomendeKwalificatie"
       ]
     },
     {
