@@ -114,7 +114,8 @@
         "http://mu.semte.ch/vocabularies/core/uuid",
         "http://www.w3.org/2004/02/skos/core#notation",
         "https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator"
-      ]
+      ],
+      "additionalFilter": "?subject ^<http://www.w3.org/ns/adms#identifier>/a ?owner . FILTER (?owner IN (<http://data.vlaanderen.be/ns/besluit#Bestuurseenheid>, <http://www.w3.org/ns/regorg#RegisteredOrganization>))"
     },
     {
       "type": "https://data.vlaanderen.be/ns/generiek#GestructureerdeIdentificator",
@@ -124,7 +125,8 @@
       "properties": [
         "http://mu.semte.ch/vocabularies/core/uuid",
         "https://data.vlaanderen.be/ns/generiek#lokaleIdentificator"
-      ]
+      ],
+      "additionalFilter": "?subject ^<https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator>/^<http://www.w3.org/ns/adms#identifier>/a ?owner . FILTER (?owner IN (<http://data.vlaanderen.be/ns/besluit#Bestuurseenheid>, <http://www.w3.org/ns/regorg#RegisteredOrganization>))"
     },
     {
       "type": "http://www.w3.org/ns/prov#Location",
