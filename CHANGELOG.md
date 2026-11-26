@@ -1,8 +1,6 @@
 # Changelog
 ## Unreleased
-- Add the public-organization-data delta producer: publishes non-worship units, registered organisations, decisions and decision activities, identifiers, werkingsgebieden, sites, addresses and contact points for OP to consume. Memberships, bestuursorganen, mandates and posts stay out until Lokale Verkenner can edit them [RVS-29] [RVS-30]
-- Bump delta-producer-publication-graph-maintainer to 1.4.4: filters the producer's export per resource [RVS-30]
-- Publish the locations inside a composed werkingsgebied: OP reads the municipalities of a scope through them, and a scope composed only in Lokale Verkenner would otherwise reach OP without members [RVS-30]
+- Add the public-organization-data delta producer: publishes non-worship units, registered organisations, change events, decisions and decision activities, identifiers, werkingsgebieden and the locations inside them, sites, addresses and contact points for OP to consume. Memberships, bestuursorganen, mandates and posts stay out until Lokale Verkenner can edit them [RVS-29]
 - Set up mock-login [RVS-39]
 - Add change-request-service 0.2.0: every edit of organisation data is a change request [RVS-28]
 - New organisations and change events wait for validation by ABB; edits apply at once [RVS-9] [RVS-10]
@@ -36,5 +34,8 @@ must set it to `"false"` before they sync from this environment (see the deploy 
 
 The producer exports a werkingsgebied's locations, not just the scope: OP resolves the municipalities of a scope
 through their `sfWithin` links, so a scope composed only here (not in OP) needs those links published. The filter on
-the `prov:Location` entry admits the composed scopes and the locations that point at one; the base set of gemeenten,
-provincies and regio's stays OP's and is not republished.
+the `prov:Location` entry admits the scopes composed by scope-of-operation (those with its `dcterms:creator`) and
+every location that sits in one, with every property the entry lists: such a gemeente is republished with its label,
+level, `exactMatch` and `sfWithin` to its province, at the initial sync and whenever a new scope includes it. OP's
+consumers only take the composed scopes and the `sfWithin` links to them, so the base set of gemeenten, provincies
+and regio's stays OP's.
