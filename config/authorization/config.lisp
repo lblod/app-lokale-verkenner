@@ -39,6 +39,7 @@
   :ext "http://mu.semte.ch/vocabularies/ext/"
   ;; Custom prefix URIs here, prefix casing is ignored
   :org "http://www.w3.org/ns/org#"
+  :time "http://www.w3.org/2006/time#"
   :besluit "http://data.vlaanderen.be/ns/besluit#"
   :regorg "http://www.w3.org/ns/regorg#"
   :locn "http://www.w3.org/ns/locn#"
@@ -49,7 +50,9 @@
   :oslc "http://open-services.net/ns/core#"
   :code "http://lblod.data.gift/vocabularies/organisatie/"
   :besluitvorming "https://data.vlaanderen.be/ns/besluitvorming#"
-  :cr "http://lblod.data.gift/vocabularies/change-requests/")
+  :cr "http://lblod.data.gift/vocabularies/change-requests/"
+  :cogs "http://vocab.deri.ie/cogs#"
+  :task "http://redpencil.data.gift/vocabularies/tasks/")
 
 
 ;;;;;;;;;
@@ -96,7 +99,10 @@
   ("org:ChangeEvent" -> _)
   ("code:VeranderingsgebeurtenisResultaat" -> _)
   ("besluit:Besluit" -> _)
-  ("besluitvorming:Beslissingsactiviteit" -> _))
+  ("besluitvorming:Beslissingsactiviteit" -> _)
+  ;; the memberships and periods the related-organizations aggregate creates and changes
+  ("org:Membership" -> _)
+  ("time:ProperInterval" -> _))
 
 ;; Change requests and their versions, the history of every edit. Only the change-request
 ;; service reads and writes it; it decides per request who may see it. Every class the service
@@ -118,6 +124,14 @@
 ;; reads the account and the organisation of a session from it.
 (define-graph sessions ("http://mu.semte.ch/graphs/sessions")
   ("session:Session" -> _))
+
+;; The jobs of the delta producer (delta-producer-background-jobs-initiator,
+;; job-controller-service, publication-graph-maintainer): jobs and the errors of their tasks,
+;; as OP keeps them in its jobs graph. The services write it with mu-auth-sudo, as in OP.
+(define-graph jobs ("http://mu.semte.ch/graphs/jobs")
+  ("cogs:Job" -> _)
+  ("task:Task" -> _)
+  ("oslc:Error" -> _))
 
 
 ;;;;;;;;;;;;;
@@ -164,6 +178,12 @@
 
 (grant (read)
        :to-graph organisations
+       :for-allowed-group "logged-in")
+
+;; The job statuses the dashboard reads (dispatcher: /jobs), as OP grants its jobs graph to
+;; its admin role. Nobody gets a write grant: the jobs are written by the services.
+(grant (read)
+       :to-graph jobs
        :for-allowed-group "logged-in")
 
 ;; The exception: the change-request service. The scope header can only come from a service in
