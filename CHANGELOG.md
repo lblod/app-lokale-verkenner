@@ -1,5 +1,6 @@
 # Changelog
 ## Unreleased
+- Add the public-organization-data delta producer: publishes non-worship units, registered organisations, change events, decisions and decision activities, identifiers, werkingsgebieden and the locations inside them, sites, addresses and contact points for OP to consume. Memberships, bestuursorganen, mandates and posts stay out until Lokale Verkenner can edit them [RVS-29]
 - Set up mock-login [RVS-39]
 - Add change-request-service 0.2.0: every edit of organisation data is a change request [RVS-28]
 - New organisations and change events wait for validation by ABB; edits apply at once [RVS-9] [RVS-10]
@@ -20,6 +21,8 @@
 ### Deploy notes
 ```
 drc up -d frontend change-requests scope-of-operation kbo-data-sync project-scripts
+drc up -d publication-triplestore jobs-controller file
+drc up -d delta-producer-publication-graph-maintainer delta-producer-background-jobs-initiator delta-producer-dump-file-publisher
 drc restart database                                      # config.lisp: the organisation graph and the logged-in group
 drc restart resource change-requests dispatcher delta-notifier   # resources model (change-requests reads it at start-up), routes, delta rule of the search index
 drc restart migrations                                    # wait for "All migrations executed"
@@ -28,3 +31,17 @@ drc restart migrations                                    # wait for "All migrat
 To fill an environment from OP: `config/project-scripts/import-from-op/README.md`.
 
 For the edit pages of related organisations and change events: publish or mount the new `lblod/frontend-lokale-verkenner`, publish the new `lblod/change-request-service` and recreate `change-requests` and `resource` (the aggregates in `change-requests.json`) and reload authorization (`drc restart database`, the memberships and periods of time in `config.lisp`).
+To publish organisations for OP's consumers, trigger the initial sync job and wait until it ends; it already writes the dump:
+```
+drc exec delta-producer-background-jobs-initiator curl -X POST http://localhost/public-organization-data/initial-sync-jobs
+```
+OP's Lokale Verkenner consumers ship with `DCR_DISABLE_INITIAL_SYNC: "true"`; their `docker-compose.override.yml`
+must set it to `"false"` before they sync from this environment (see the deploy notes of `app-organization-portal`).
+
+The producer exports a werkingsgebied's locations, not just the scope: OP resolves the municipalities of a scope
+through their `sfWithin` links, so a scope composed only here (not in OP) needs those links published. The filter on
+the `prov:Location` entry admits the scopes composed by scope-of-operation (those with its `dcterms:creator`) and
+every location that sits in one, with every property the entry lists: such a gemeente is republished with its label,
+level, `exactMatch` and `sfWithin` to its province, at the initial sync and whenever a new scope includes it. OP's
+consumers only take the composed scopes and the `sfWithin` links to them, so the base set of gemeenten, provincies
+and regio's stays OP's.
