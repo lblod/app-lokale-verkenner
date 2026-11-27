@@ -10,12 +10,15 @@
 - Migrations: status labels of the validation flow, earlier requests set to afgehandeld, a second ABB mock account [RVS-37]
 - Add the import-from-op mu-script; the seed migrations move to config/dev-migrations [RVS-40]
 - Add mock-login accounts for the organisations an OP import brings in [RVS-40]
+- Add the frontend, lblod/frontend-lokale-verkenner 0.0.2, to the stack
+- Add an inactive flag to the municipality locations that ceased to exist through mergers, as in OP [OP-3973]
+- Store the original values on the result of a change event, as in OP [OP-3950]
 
 ### Deploy notes
 ```
-drc up -d change-requests scope-of-operation kbo-data-sync project-scripts
+drc up -d frontend change-requests scope-of-operation kbo-data-sync project-scripts
 drc restart database                                      # config.lisp: the organisation graph and the logged-in group
-drc restart resource dispatcher delta-notifier            # resources model, routes, delta rule of the search index
+drc restart resource change-requests dispatcher delta-notifier   # resources model (change-requests reads it at start-up), routes, delta rule of the search index
 drc restart migrations                                    # wait for "All migrations executed"
 /bin/bash scripts/reset-elastic.sh                        # last: creates data/elasticsearch, builds the index, ends with "up -d"
 ```
