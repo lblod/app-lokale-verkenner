@@ -14,6 +14,7 @@
 - Add the frontend, lblod/frontend-lokale-verkenner 0.0.2, to the stack
 - Add an inactive flag to the municipality locations that ceased to exist through mergers, as in OP [OP-3973]
 - Store the original values on the result of a change event, as in OP [OP-3950]
+- A besluit asks for one or more links, a text when the link is not known, or a message that no link is available: `foaf:page`, `eli:description` or `geenLinkBeschikbaar` [RVS-28]
 
 ### Deploy notes
 ```

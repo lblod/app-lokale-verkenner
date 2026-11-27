@@ -135,6 +135,14 @@
         "document-links": {
           "type": "uri-set",
           "predicate": "foaf:page"
+        },
+        "description": {
+          "type": "string",
+          "predicate": "http://data.europa.eu/eli/ontology#description"
+        },
+        "geen-link-beschikbaar": {
+          "type": "string",
+          "predicate": "http://lblod.data.gift/vocabularies/organisatie/geenLinkBeschikbaar"
         }
       },
       "relationships": {
